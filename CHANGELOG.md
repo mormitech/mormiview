@@ -3,6 +3,12 @@
 All notable changes to mcView are listed here, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and the versions are the [releases](https://github.com/mormitech/mcview/releases).
 
+## 0.57.2 – 2026-11-05
+
+### Added
+
+- Control mode: `aidlg` leaves the AI provider dialog open with a provider, a key and a model in it (for the screenshot of choosing a model with an API key); `close` cancels it.
+
 ## 0.57.1 – 2026-11-05
 
 ### Added

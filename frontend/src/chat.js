@@ -87,6 +87,24 @@ async function changeProvider() {
   refresh();
 }
 
+// aiDialog is the control mode's command "aidlg" (docs/control.md): the provider dialog, left open with a provider, a key (shown as
+// dots) and a model in it, as if the user were about to change the model; close: true cancels it (nothing is kept).
+export async function aiDialog(m) {
+  if (m.close) { document.querySelector('.mv-modal .cancel')?.click(); return; }
+  changeProvider();
+  await new Promise((r) => setTimeout(r, 400));
+  const box = document.querySelector('.mv-modal .mv-box'); if (!box) throw new Error('the dialog did not open');
+  const sel = box.querySelector('#mv-prov');
+  if (m.provider !== undefined) { sel.value = m.provider; sel.dispatchEvent(new Event('change')); }
+  const or = sel.value === 'openrouter';
+  if (m.key !== undefined) box.querySelector(or ? '#mv-orkey' : '#mv-key').value = m.key;
+  if (m.model !== undefined) {
+    const f = box.querySelector(or ? '#mv-ormodel' : '#mv-model');
+    f.value = m.model; f.focus();
+    if (f.setSelectionRange) f.setSelectionRange(f.value.length, f.value.length);
+  }
+}
+
 function newConversation() {
   ChatReset(); $('chat-log').replaceChildren(); bubble = null; setBusy(false); add('hint', 'New conversation. Ask Claude to change this picture.');
 }

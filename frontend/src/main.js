@@ -2,7 +2,7 @@ import './style.css';
 import {Effect, Transform, SaveToPathQ, Version, Mode, PolygonPNG, DiscardChanges, PaintPixels, NewBlankColor, SaveToPath, Image, ChooseImage, Step, Trace, Reveal, ToggleFullscreen, ExitFullscreen, IsFullscreen, CloseWindow, PreparePixels, PixelAt, SelectionPNG, RotatePNG, SetTurn, SetFloat, ClearFloat, BakeFloat, HasTransparency, RestoreState, RestoreFloat, KeepStates, CopyImageNative, PasteLayer, PasteNew, DrawStroke, DrawShape, Retouch, ResizeCanvas, CropPicture, DrawLayer, FloodFill, DeleteImage, DiscardOK, ConfirmQuit, ControlReply, ClipboardHasImage, NewBlank, SaveSelectionAs, SetEditMode, SetTitleInfo, SetPasted, MovePasted, RestoreLayer, SaveAs, SaveWindow, SetMenuBar, NewWindow, ScanImage, PrintPNG, SaveRegionTo, GifInfo, GifFrame, SetGifFrame, Recent, OpenRecent, ClearRecent, GifStart, GifAddFrame, GifDuplicateFrame, GifDeleteFrame, GifMoveFrame, GifSetDelay, ExportFramesDialog} from '../wailsjs/go/main/App';
 import {BrowserOpenURL, EventsOn} from '../wailsjs/runtime/runtime';
 import logo from './assets/mormitech-mark.svg';
-import {initChat, toggleChat} from './chat.js';
+import {aiDialog, initChat, toggleChat} from './chat.js';
 import {initTips} from './tooltip.js';
 
 const $ = (id) => document.getElementById(id);
@@ -2345,6 +2345,7 @@ async function ctlRun(m) {
       if (m.text !== undefined) { const t = $('chat-text'); t.value = m.text; t.dispatchEvent(new Event('input')); }
       await ctl.sleep(m.wait ?? 3500); return {ok: true};
     }
+    case 'aidlg': await aiDialog(m); await ctl.sleep(m.wait ?? 600); return {ok: true}; // the AI provider dialog, filled in (close: true cancels it)
     case 'closemenu': closeSelectionMenu(); return {ok: true};
     case 'rotdlg': { // the Rotate by angle dialog, left open with the angle {angle} in it (close: true shuts it)
       if (m.close) { $('rd-cancel').click(); return {ok: true}; }
