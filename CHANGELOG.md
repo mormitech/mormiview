@@ -3,6 +3,12 @@
 All notable changes to mcView are listed here, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and the versions are the [releases](https://github.com/mormitech/mcview/releases).
 
+## 0.57.3 – 2026-11-05
+
+### Fixed
+
+- Web version: while it starts, only the loading screen shows (in the theme's colors); the half-styled page no longer shows through before the program and its style have loaded.
+
 ## 0.57.2 – 2026-11-05
 
 ### Added
