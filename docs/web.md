@@ -19,6 +19,11 @@ scripts/build_web.sh serve    # the same, then served on http://localhost:5180
 `application/wasm` and, for speed, compressed (gzip or brotli: the 20 MB program becomes about 5 MB). The page needs a secure context
 (https, or localhost) for the clipboard.
 
+Each release (a `v*` tag) attaches the site as `mormiview-web-<version>.zip`, with `mormiview-web-<version>.zip.sha256`, and the
+same zip as `mormiview-web.zip`. mormitech.com hosts it at https://mormitech.com/mormitools/mormiview/app/, pinned to a version: the
+file `vendors/mormiview-web.version` of the mormitech-com repo names it, its deploy downloads that zip and checks the SHA-256, and a
+mormiView release bumps that file.
+
 ## How it fits together
 
 | Desktop (Wails) | Web |

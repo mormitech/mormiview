@@ -3,6 +3,12 @@
 All notable changes to mcView are listed here, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and the versions are the [releases](https://github.com/mormitech/mcview/releases).
 
+## 0.57.1 – 2026-11-05
+
+### Added
+
+- Each release also has the web version as a zip, for hosting it: `mormiview-web-<version>.zip` with its SHA-256 (`.sha256`), and the same zip as `mormiview-web.zip`. The zip is the site folder (`index.html`, `assets/`, `mormiview.wasm`), with relative paths only, so it runs from any folder of a site; mormitech.com hosts it at mormitech.com/mormitools/mormiview/app/.
+
 ## 0.57.0 – 2026-11-05
 
 ### Added
