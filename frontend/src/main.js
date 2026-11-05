@@ -17,6 +17,7 @@ const errText = (e) => {
 
 const COFFEE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 9.5h12v5a5 5 0 0 1-5 5h-2a5 5 0 0 1-5-5zM16.5 11h1.5a2.5 2.5 0 0 1 0 5h-1.8M8 3.5c-.9 1 .9 1.8 0 2.8M12 3.5c-.9 1 .9 1.8 0 2.8"/></svg>';
 const REPO = 'https://github.com/mormitech/mormiview';
+const WEB = document.body.classList.contains('web'); // the web version (frontend/web): the same page, started in a browser
 
 async function showAbout() {
   document.body.classList.add('about-mode');
@@ -27,7 +28,7 @@ async function showAbout() {
   $('about').innerHTML = `<img class="logo" src="${logo}" alt="" width="132">
     <h1><span class="wordmark"><span class="wm-mormi">mormi</span><span class="wm-product">View</span></span></h1>
     <p class="muted">Version ${esc(await Version())}</p>
-    <p>A picture viewer for macOS, Windows and Linux. Open a picture from your file manager (Open with…) or with File → Open.</p>
+    <p>${WEB ? 'A picture viewer and editor that runs in your browser. Your pictures stay in this browser; only the Claude chat, when you use it, sends them to the Claude API.' : 'A picture viewer for macOS, Windows and Linux. Open a picture from your file manager (Open with…) or with File → Open.'}</p>
     <p class="muted">Free and open source, MIT license. No accounts, no ads, no telemetry.</p>
     <p class="links"><a href="${REPO}">Website and source code</a><a href="${REPO}/issues">Report a problem</a><a href="${REPO}/blob/main/LICENSE">License</a><a class="coffee" href="https://mormitech.com/support-us/">${COFFEE}Buy me a coffee</a></p>`;
 }
@@ -2035,7 +2036,7 @@ function startViewer() {
     if (cancelDraw()) ev.preventDefault();
   });
   const cmd = navigator.platform.startsWith('Mac') ? '⌘' : 'Ctrl+';
-  $('hint').textContent = 'Open a picture, paste one from the clipboard, or start a blank one. You can also open pictures with mormiView from your file manager.';
+  $('hint').textContent = WEB ? 'Open a picture, paste one from the clipboard, or start a blank one. You can also drop pictures or a whole folder on this window; they stay in this browser.' : 'Open a picture, paste one from the clipboard, or start a blank one. You can also open pictures with mormiView from your file manager.';
   $('k-clip').textContent = `${cmd}V`; $('k-reopen').textContent = `${cmd}Z`;
   $('reopen-pic').onclick = () => undo();
   $('open').onclick = choose;

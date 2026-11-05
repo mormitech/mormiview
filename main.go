@@ -1,9 +1,10 @@
+//go:build !js
+
 package main
 
 import (
 	"context"
 	"embed"
-	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
@@ -19,24 +20,6 @@ import (
 
 //go:embed all:frontend/dist
 var assets embed.FS
-
-// wails.json is the single source of the version: it ends up in the macOS Info.plist and the Windows file properties,
-// and is read from here for the window title and the UI.
-//
-//go:embed wails.json
-var projectJSON []byte
-
-func version() string {
-	var p struct {
-		Info struct {
-			ProductVersion string `json:"productVersion"`
-		} `json:"info"`
-	}
-	if json.Unmarshal(projectJSON, &p) != nil || p.Info.ProductVersion == "" {
-		return "dev"
-	}
-	return p.Info.ProductVersion
-}
 
 // windowFlags reads --about (show the About window instead of the viewer: mode is "about", "" for the viewer), --theme, --cascade, and the file to open (`mormiview picture.jpg`, which is also how Windows and Linux hand over a
 // double-clicked file). The app starts itself with --about, because Wails v2 has one window per process.

@@ -282,7 +282,7 @@ func (a *App) askGifSave(frame, count int) gifSaveChoice {
 			return gifSaveFrame
 		}
 		return gifSaveCancel
-	case "darwin":
+	case "darwin", "js": // (js: the web version, whose dialogs have buttons of their own, see web_main.go)
 		res, err := wruntime.MessageDialog(a.ctx, wruntime.MessageDialogOptions{
 			Type: wruntime.QuestionDialog, Title: "Save animation", Message: text,
 			Buttons: []string{"Whole animation", "This frame", "Cancel"}, DefaultButton: "Whole animation", CancelButton: "Cancel",

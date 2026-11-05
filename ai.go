@@ -13,6 +13,13 @@ import (
 
 type aiSettings struct {
 	NoWeb bool `json:"noWeb"` // no web search and fetch
+
+	// Who answers in the chat panel (AI → AI Provider and Key…): "" is Claude Code with the user's Claude subscription (the desktop's
+	// default), "anthropic" the Claude API and "openrouter" OpenRouter, both with the user's own API key and called from the page
+	// (frontend/src/chat-api.js). The models are the ones chosen for each; the keys are in keys.json (chatKeys).
+	Provider        string `json:"provider,omitempty"`
+	AnthropicModel  string `json:"anthropicModel,omitempty"`
+	OpenRouterModel string `json:"openRouterModel,omitempty"`
 }
 
 func aiSettingsPath() string {
@@ -45,11 +52,12 @@ func saveAI(s aiSettings) {
 	}
 }
 
-func aiMenu(m *menu.Menu) {
+func aiMenu(app *App, m *menu.Menu) {
 	ai := m.AddSubmenu("AI")
 	ai.AddCheckbox("Web search and fetch", !loadAI().NoWeb, nil, func(cd *menu.CallbackData) {
 		s := loadAI()
 		s.NoWeb = !cd.MenuItem.Checked
 		saveAI(s)
 	})
+	ai.AddText("AI Provider and Key…", nil, func(*menu.CallbackData) { app.emit("chatProvider") }) // (the page asks: chat-api.js)
 }

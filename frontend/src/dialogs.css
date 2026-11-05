@@ -1,0 +1,14 @@
+/* The dialogs drawn by the page (src/dialogs.js): the web version's message and Save dialogs, and the AI provider dialog of both versions. */
+.mv-modal { position:fixed; inset:0; z-index:80; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,.35); }
+.mv-box { width:min(440px, calc(100vw - 32px)); background:var(--panel); color:var(--text); border:1px solid var(--line); border-radius:12px; padding:18px 20px 16px; box-shadow:0 20px 60px rgba(0,0,0,.35); }
+.mv-box h2 { margin:0 0 10px; font-size:16px; }
+.mv-box .mv-msg { margin:0 0 14px; line-height:1.45; }
+.mv-box .mv-note { margin:6px 0 0; color:var(--muted); font-size:12px; }
+.mv-box .mv-err { margin:8px 0 0; color:var(--bad); font-size:12px; } .mv-box .mv-err[hidden] { display:none; }
+.mv-box .mv-row { display:flex; align-items:center; gap:10px; margin:8px 0; }
+.mv-box .mv-row label { width:64px; flex:none; color:var(--muted); }
+.mv-box .mv-row input, .mv-box .mv-row select { flex:1; min-width:0; font:inherit; padding:6px 8px; border:1px solid var(--line); border-radius:6px; background:var(--bg); color:var(--text); }
+.mv-box .mv-check { display:flex; align-items:center; gap:8px; margin:10px 0 0; font-size:13px; }
+.mv-box .mv-btns { display:flex; justify-content:flex-end; gap:8px; margin-top:16px; }
+.mv-box button.primary { background:var(--accent); color:var(--accent-text); border-color:var(--accent); }
+

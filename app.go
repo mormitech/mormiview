@@ -257,9 +257,12 @@ func (a *App) SetEditMode(on bool) {
 
 func (a *App) emit(event string, data ...interface{}) {
 	if a.ctx != nil {
-		wruntime.EventsEmit(a.ctx, event, data...)
+		emitEvent(a.ctx, event, data...)
 	}
 }
+
+// emitEvent sends an event to the page: Wails' events on the desktop; the web build (web_main.go) puts its own in.
+var emitEvent = wruntime.EventsEmit
 
 // imageFilter is the file type list of the Open dialog, from imageTypes.
 func imageFilter() wruntime.FileFilter {

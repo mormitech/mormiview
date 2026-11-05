@@ -279,6 +279,7 @@ body.chat-resizing { user-select:none; cursor:col-resize; } body.chat-resizing #
 #tip { position:fixed; z-index:1000; max-width:260px; padding:6px 10px; border-radius:8px; background:#1d2433; color:#f3f5fa; font:500 12px/1.4 system-ui, sans-serif; box-shadow:0 6px 20px rgba(0,0,0,.28); pointer-events:none; opacity:0; transform:translateY(3px); transition:opacity .12s, transform .12s; }
 #tip.on { opacity:1; transform:none; }
 
+#chat header #chat-edit { width:22px; height:22px; padding:0; margin-left:2px; border:0; border-radius:6px; background:none; color:var(--muted); display:flex; align-items:center; justify-content:center; flex:none; } #chat header #chat-edit svg { width:13px; height:13px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; } #chat header #chat-edit:hover { background:var(--btn); color:var(--text); }
 #chat header #chat-new { background:rgba(47,109,246,.16); color:#2f6df6; } #chat header #chat-new:hover { background:rgba(47,109,246,.28); }
 #chat header #chat-close { background:rgba(240,160,30,.2); color:#d98a0b; } #chat header #chat-close:hover { background:rgba(240,160,30,.34); }
 

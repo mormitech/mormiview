@@ -205,8 +205,10 @@ func (a *App) pasteImage() { a.emit("menu-paste") }
 
 var errNoClipboardPicture = errors.New("there is no picture on the clipboard")
 
-// readClipboardImage asks the system for the picture on its clipboard.
-func readClipboardImage() (image.Image, error) {
+// readClipboardImage asks the system for the picture on its clipboard (the web build puts the browser's clipboard in, see web_main.go).
+var readClipboardImage = readSystemClipboardImage
+
+func readSystemClipboardImage() (image.Image, error) {
 	f, err := os.CreateTemp("", "mormiview-*.img")
 	if err != nil {
 		return nil, err
