@@ -1,7 +1,8 @@
 name: build
 
 # Every push builds and tests on the three systems. Pushing a tag like v0.0.1 also attaches the packages to a GitHub
-# release: a zipped .app and a .dmg (macOS arm64), an Inno Setup installer and a zip (Windows x64), a tar.gz, a .deb and an .rpm (Linux x64).
+# release: a zipped .app and a .dmg (macOS arm64), an Inno Setup installer and a zip (Windows x64), a tar.gz, a .deb and an .rpm (Linux x64),
+# and the web version as a zip (mormiview-web-<version>.zip with its .sha256, and mormiview-web.zip).
 on:
   push:
     branches: [main]
@@ -107,6 +108,17 @@ jobs:
           fpm "${common[@]}" -t rpm -d gtk3 -d webkit2gtk4.1 -p "dist/mormiview-$v-linux-x86_64.rpm" "${files[@]}"
       # The packages have to install: the .deb is installed for real (its dependencies must be found), the program must have all its libraries,
       # and removing the package takes everything away; the .rpm is checked for its files and requirements.
+      # The web version for hosting (mormitech.com takes it pinned to a version): the site folder as a zip, its SHA-256,
+      # and the same zip under a fixed name. Every path in the page has to be relative, so that it runs from any folder.
+      - name: Package (web)
+        if: runner.os == 'Linux'
+        run: |
+          if grep -Eq '(src|href)="/' frontend/dist-web/index.html; then echo "an absolute path in the web page"; exit 1; fi
+          v="${{ steps.version.outputs.version }}"
+          (cd frontend/dist-web && zip -qr -X "$GITHUB_WORKSPACE/dist/mormiview-web-$v.zip" .)
+          cp "dist/mormiview-web-$v.zip" dist/mormiview-web.zip
+          (cd dist && sha256sum "mormiview-web-$v.zip" > "mormiview-web-$v.zip.sha256")
+          cat "dist/mormiview-web-$v.zip.sha256"
       - name: Test the Linux packages
         if: runner.os == 'Linux'
         run: |
