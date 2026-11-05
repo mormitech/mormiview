@@ -33,7 +33,7 @@ func appMenu(app *App) *menu.Menu {
 		editMenu(app, m)
 		imageMenu(app, m)
 		effectsMenu(app, m)
-		aiMenu(m)
+		aiMenu(app, m)
 		m.Append(menu.WindowMenu())
 		m.AddSubmenu("Help").AddText("mormiView Help", nil, func(*menu.CallbackData) { app.openHelp() }) // the last menu, where macOS has it
 		return m
@@ -42,7 +42,7 @@ func appMenu(app *App) *menu.Menu {
 	editMenu(app, m)
 	imageMenu(app, m)
 	effectsMenu(app, m)
-	aiMenu(m)
+	aiMenu(app, m)
 	help := m.AddSubmenu("Help")
 	help.AddText("mormiView Help", keys.Key("f1"), func(*menu.CallbackData) { app.openHelp() })
 	help.AddSeparator()

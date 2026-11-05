@@ -6,3 +6,8 @@ dist
 packaging/windows/installer.generated.iss
 /mormiview
 __pycache__/
+
+# the web version (scripts/build_web.sh)
+frontend/dist-web
+frontend/web/public/mormiview.wasm
+frontend/web/wasm_exec.js

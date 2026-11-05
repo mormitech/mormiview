@@ -1,9 +1,20 @@
-import {ChatInfo, ChatLogin, ChatReset, ChatSend, ChatStop} from '../wailsjs/go/main/App';
+import * as claudeCode from '../wailsjs/go/main/App';
 import {BrowserOpenURL, EventsOn} from '../wailsjs/runtime/runtime';
 import {renderMarkdown} from './md.js';
+import {apiBindings, askProvider, onChatEvent, usesAPI} from './chat-api.js';
 
 // The chat panel: Claude Code, started in the background by Go (see chat.go), with the pictures of this window as its tool. Three states: Claude Code is
 // not installed, the user is not signed in (the sign-in opens the browser and Claude Code keeps the token), and the chat itself.
+// Or, when AI → AI Provider and Key… (the pencil next to the model) chose the Claude API or OpenRouter, the page's own conversation with that
+// API (chat-api.js), with the same tools and the same events; the web version always chats that way.
+
+// backend is the one that answers now: its ChatInfo, ChatLogin, ChatSend, ChatStop and ChatReset.
+const backend = async () => ((await usesAPI()) ? apiBindings : claudeCode);
+const ChatInfo = async () => (await backend()).ChatInfo();
+const ChatLogin = async () => (await backend()).ChatLogin();
+const ChatSend = async (t) => (await backend()).ChatSend(t);
+const ChatStop = async () => (await backend()).ChatStop();
+const ChatReset = () => { claudeCode.ChatReset(); apiBindings.ChatReset(); };
 
 const $ = (id) => document.getElementById(id);
 const errText = (e) => (e && e.message) || String(e);
@@ -68,6 +79,18 @@ function showSetup(text, buttons = [], extra = '') {
   }
 }
 
+// changeProvider is the pencil and AI → AI Provider and Key…: another provider starts a new conversation.
+async function changeProvider() {
+  const r = await askProvider();
+  if (!r.ok) return;
+  if (r.changed) newConversation();
+  refresh();
+}
+
+function newConversation() {
+  ChatReset(); $('chat-log').replaceChildren(); bubble = null; setBusy(false); add('hint', 'New conversation. Ask Claude to change this picture.');
+}
+
 async function login() {
   try { signingIn = true; await ChatLogin(); render(); } catch (e) { signingIn = false; render(errText(e)); }
 }
@@ -75,17 +98,21 @@ async function login() {
 function render(problem = '') {
   if (!info) { showSetup('Checking Claude Code…'); return; }
   if (!info.claude) {
-    showSetup(`${problem ? problem + '\n\n' : ''}Claude Code is not installed. The chat uses your own Claude Code and your Claude subscription. Install it from claude.com/product/claude-code, then check again.`, [['Check again', refresh, true]]);
+    showSetup(`${problem ? problem + '\n\n' : ''}Claude Code is not installed. The chat uses your own Claude Code and your Claude subscription. Install it from claude.com/product/claude-code, then check again. Or chat with an API key (the Claude API or OpenRouter) instead.`, [['Check again', refresh, true], ['Use an API key…', changeProvider]]);
   } else if (signingIn) {
     showSetup('Waiting for the sign-in in your browser…', [['Cancel', () => { ChatStop(); signingIn = false; loginUrl = ''; render(); }]], loginUrl);
   } else if (!info.loggedIn) {
-    showSetup(`${problem ? problem + '\n\n' : ''}Sign in to Claude to chat here. This opens your browser; mormiView never sees your password. Claude Code keeps the sign-in.`, [['Sign in with Claude', login, true], ['Check again', refresh]]);
+    // (the web version signs in with an API key, and says so: info.signInText, info.signInLabel)
+    showSetup(`${problem ? problem + '\n\n' : ''}${info.signInText || 'Sign in to Claude to chat here. This opens your browser; mormiView never sees your password. Claude Code keeps the sign-in.'}`, info.signInLabel ? [[info.signInLabel, login, true]] : [['Sign in with Claude', login, true], ['Check again', refresh], ['Use an API key…', changeProvider]]);
   } else {
     $('chat-setup').hidden = true; $('chat-main').hidden = false;
     const who = [info.email, info.plan].filter(Boolean).join(' · ');
     $('chat-who').textContent = who;
-    $('chat-who').title = info.method && info.method !== 'claude.ai' ? 'Not a Claude subscription: this is billed by usage' : '';
-    $('chat-who').classList.toggle('warn', !!info.method && info.method !== 'claude.ai');
+    // (Claude Code signed in with an API key rather than the subscription is billed by usage, which may be a surprise: it shows in red.
+    // A provider chosen with an API key says so itself.)
+    const warn = !info.api && !!info.method && info.method !== 'claude.ai';
+    $('chat-who').title = warn ? 'Not a Claude subscription: this is billed by usage' : info.api ? 'Billed by usage to your API key' : '';
+    $('chat-who').classList.toggle('warn', warn);
     if (!$('chat-log').children.length) add('hint', 'Ask Claude to change this picture, for example “draw a red circle in the middle”.');
     setBusy(!!info.busy);
     $('chat-text').focus();
@@ -131,7 +158,7 @@ function grow() {
 function onEvent(ev) {
   switch (ev.kind) {
     case 'start': bubble = null; streamed = false; break;
-    case 'delta': say(ev.text, true); streamed = true; break;
+    case 'delta': if (!bubble && !ev.text.trim()) break; say(ev.text, true); streamed = true; break; // (no empty bubble for the blank lines a model writes before a tool call)
     case 'text': if (!streamed && ev.text.trim()) { bubble = null; say(ev.text, false); } break;
     case 'tool': bubble = null; if (!act) startActivity(); act.n++; { const t = document.createElement('div'); t.className = 'tool'; t.textContent = `${ev.name} ${ev.input}`; act.list.append(t); } act.lbl.textContent = 'Processing…'; showCount(); break;
     case 'toolerror': if (!act) startActivity(); act.bad++; { const t = document.createElement('div'); t.className = 'tool bad'; t.textContent = ev.text || 'A tool failed'; act.list.append(t); } showCount(); break;
@@ -182,6 +209,9 @@ function initResize() {
 export function initChat() {
   initResize();
   EventsOn('chat', onEvent);
+  onChatEvent(onEvent);
+  EventsOn('chatProvider', () => changeProvider()); // (AI → AI Provider and Key…)
+  $('chat-edit').onclick = () => changeProvider();
   $('chat-toggle').onclick = () => toggleChat();
   document.addEventListener('keydown', (ev) => { // Esc in the chat window minimizes it (and is not passed on: it would also step the picture's own Esc)
     if (ev.key !== 'Escape' || !isOpen || ev.isComposing || !ev.target.closest?.('#chat')) return;
@@ -189,9 +219,9 @@ export function initChat() {
     document.activeElement?.blur();
     toggleChat(false);
   }, true);
-  document.addEventListener('pointerdown', (ev) => { if (isOpen && !ev.target.closest('#chat, #chat-toggle')) toggleChat(false); }, true); // a click next to the panel minimizes it (and still does what it was for)
+  document.addEventListener('pointerdown', (ev) => { if (isOpen && !ev.target.closest('#chat, #chat-toggle, .mv-modal')) toggleChat(false); }, true); // a click next to the panel minimizes it (and still does what it was for)
   $('chat-close').onclick = () => toggleChat(false);
-  $('chat-new').onclick = () => { ChatReset(); $('chat-log').replaceChildren(); bubble = null; setBusy(false); add('hint', 'New conversation. Ask Claude to change this picture.'); };
+  $('chat-new').onclick = newConversation;
   $('chat-send').onclick = send;
   $('chat-stop').onclick = () => ChatStop();
   const t = $('chat-text');

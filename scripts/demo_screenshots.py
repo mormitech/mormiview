@@ -55,13 +55,11 @@ def main(samples, out="docs/screenshots", app="build/bin/mormiview.app", only=""
     mc.cmd("mode", mode=2)
     shot("01-view")
 
-    # the hero: edit mode, a slight zoom, a selection and the chat open (an unsent draft, nothing drawn), the pixel readout showing a color
+    # the hero: edit mode, a selection on the sky and the chat open with a friendly request (an unsent draft, nothing drawn)
     mc.cmd("edit")
-    mc.cmd("zoom", scale=0.5, x=px(0.76, 0.535)[0], y=px(0.76, 0.535)[1])
-    a, b = px(0.63, 0.52), px(0.715, 0.625)  # the people on the beach
+    a, b = px(0.02, 0.03), px(0.62, 0.45)  # the evening sky
     mc.cmd("select", x0=a[0], y0=a[1], x1=b[0], y1=b[1])
-    mc.cmd("chat", text="Remove the people from the beach")
-    mc.cmd("pixel", x=px(0.60, 0.62)[0], y=px(0.60, 0.62)[1], show=True)
+    mc.cmd("chat", text="Warm up the evening sky a little")
     shot("00-hero")
     mc.cmd("chat", on=False, wait=600)
     mc.cmd("polygon", pts=[])
@@ -143,6 +141,15 @@ def main(samples, out="docs/screenshots", app="build/bin/mormiview.app", only=""
     mc.cmd("effect", op="grayscale", selection=True, recent=True)
     mc.cmd("effect", op="sharpen", selection=True, recent=True)
     shot("11-effect-part")
+
+    # Highlight: the people on the beach stay, the rest of the picture is pushed back (medium: dimmed and paler, still readable)
+    mc.answer("discard", "discard")
+    open_picture("coast.jpg")
+    mc.cmd("tool", name="select")
+    a, b = px(0.60, 0.50), px(0.74, 0.66)
+    mc.cmd("select", x0=a[0], y0=a[1], x1=b[0], y1=b[1])
+    mc.cmd("effect", op="highlight", level="medium", selection=True)
+    shot("21-effect-highlight")
 
     # a free-hand selection, and the right-click menus
     mc.answer("discard", "discard")

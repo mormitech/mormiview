@@ -1,0 +1,38 @@
+/* The web version's own parts: the menu bar (the desktop has the system's), the dialogs the system draws there, the loading screen. */
+
+:root { --menubar-h: 30px; }
+
+/* ---- Loading ---- */
+#mv-loading { position:fixed; inset:0; z-index:100; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; background:var(--bg); color:var(--muted); font:14px system-ui, sans-serif; }
+#mv-loading p { margin:0; font-size:24px; font-weight:700; }
+#mv-loading .bar { width:180px; height:4px; border-radius:2px; background:var(--line); overflow:hidden; }
+#mv-loading .bar i { display:block; height:100%; width:4%; background:var(--accent); transition:width .15s; }
+#mv-loading.failed .bar { display:none; } #mv-loading.failed small { color:var(--bad); max-width:420px; text-align:center; }
+
+/* ---- Menu bar ---- */
+#menubar { position:fixed; left:0; right:0; top:0; height:var(--menubar-h); z-index:40; display:flex; align-items:center; gap:2px; padding:0 8px;
+  background:var(--panel); border-bottom:1px solid var(--line); user-select:none; }
+#menubar .brand { font-weight:700; font-size:13px; margin:0 10px 0 4px; letter-spacing:.1px; }
+#menubar button { background:none; border:0; border-radius:5px; padding:3px 9px; font-size:13px; color:var(--text); }
+#menubar button:hover, #menubar button.open { background:var(--btn); }
+body.has-menubar #viewer { top:var(--menubar-h); }
+body.has-menubar #chat { top:calc(var(--menubar-h) + 44px); }
+body.has-menubar.nomenu #menubar, body.has-menubar.full #menubar { display:none; }
+body.has-menubar.nomenu #viewer, body.has-menubar.full #viewer { top:0; }
+body.about-mode #menubar { display:none; }
+
+.mv-menu { position:fixed; z-index:60; min-width:220px; padding:5px; background:var(--panel); border:1px solid var(--line); border-radius:8px;
+  box-shadow:0 10px 30px rgba(10,20,40,.25); font-size:13px; max-height:calc(100vh - 40px); overflow:visible; }
+.mv-menu .mv-menu { position:absolute; }
+.mv-menu > button { display:flex; align-items:center; width:100%; gap:6px; background:none; border:0; border-radius:5px; padding:4px 8px; text-align:left; color:var(--text); font-size:13px; white-space:nowrap; }
+.mv-menu > button:hover:not(:disabled), .mv-menu > button:focus-visible { background:var(--accent); color:var(--accent-text); outline:none; }
+.mv-menu > button:disabled { color:var(--muted); opacity:.6; cursor:default; }
+.mv-menu .chk { width:14px; flex:none; } .mv-menu .lbl { flex:1; } .mv-menu .acc { color:inherit; opacity:.6; font-size:12px; margin-left:24px; } .mv-menu .arr { opacity:.7; }
+.mv-menu .sep { height:1px; margin:4px 6px; background:var(--line); }
+
+/* ---- What a page cannot do ---- */
+body.web #scan-pic { display:none; }
+
+/* ---- Files dragged over the window ---- */
+body.dropping #viewer::after { content:'Drop to open'; position:absolute; inset:12px; z-index:30; display:flex; align-items:center; justify-content:center; border:3px dashed var(--accent); border-radius:16px;
+  background:color-mix(in srgb, var(--accent) 12%, transparent); color:var(--accent); font-size:20px; font-weight:600; pointer-events:none; }

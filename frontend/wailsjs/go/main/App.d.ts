@@ -4,15 +4,23 @@ import {main} from '../models';
 
 export function BakeFloat():Promise<main.ImageInfo>;
 
+export function ChatAPIConfig():Promise<Record<string, any>>;
+
 export function ChatInfo():Promise<Record<string, any>>;
 
 export function ChatLogin():Promise<void>;
+
+export function ChatPrompt():Promise<string>;
 
 export function ChatReset():Promise<void>;
 
 export function ChatSend(arg1:string):Promise<void>;
 
 export function ChatStop():Promise<void>;
+
+export function ChatTool(arg1:string,arg2:string):Promise<string>;
+
+export function ChatTools():Promise<string>;
 
 export function ChooseImage():Promise<void>;
 
@@ -141,6 +149,8 @@ export function SaveWindow():Promise<void>;
 export function ScanImage():Promise<void>;
 
 export function SelectionPNG(arg1:number,arg2:number,arg3:number,arg4:number,arg5:number,arg6:number):Promise<string>;
+
+export function SetChatAPIConfig(arg1:string,arg2:string,arg3:string,arg4:string,arg5:string):Promise<void>;
 
 export function SetEditMode(arg1:boolean):Promise<void>;
 

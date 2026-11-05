@@ -3,6 +3,38 @@
 All notable changes to mcView are listed here, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and the versions are the [releases](https://github.com/mormitech/mcview/releases).
 
+## 0.57.0 – 2026-11-05
+
+### Added
+
+- **The chat with an API key in the desktop app too**: AI → AI Provider and Key… chooses who answers in the chat panel: Claude Code with your Claude subscription (as before, the default), the Claude API with your API key, or OpenRouter with your OpenRouter key, each with its model. With an API key the panel talks to that API itself, with the same picture tools; the keys are kept in the settings folder in a file only you can read (`keys.json`), or only until the window is closed. When Claude Code is not installed or not signed in, the panel offers **Use an API key…**.
+- A pencil next to the model at the top of the chat panel changes the provider and the model (in the app and in the web version).
+
+### Fixed
+
+- The model at the top of the chat panel was red when an API key was used in the web version: red is for Claude Code signed in with an API key instead of a subscription (billed by usage without your choosing it).
+- A model that writes blank lines before a tool call no longer leaves an empty bubble in the chat.
+
+## 0.56.0 – 2026-11-05
+
+### Added
+
+- **OpenRouter in the web version's chat**: AI → AI Provider and Key… chooses the provider, the Claude API or OpenRouter, each with its own API key and model. With OpenRouter the chat goes through openrouter.ai with your OpenRouter key and credits, to any of its models that can use tools and see pictures (Claude Opus 5.5 by default; the list comes from OpenRouter), with the same picture tools. Changing the provider starts a new conversation.
+
+## 0.55.0 – 2026-11-04
+
+### Added
+
+- **mormiView in the browser**: a static web version that needs no install and no server (`scripts/build_web.sh` builds it into `frontend/dist-web`, for any static host). It is the same program: the Go code is built for WebAssembly and the page is the desktop app's, so viewing, the zoom modes, edit mode and all its tools, effects, selections, the clipboard, undo, animated GIFs, rotating, resizing and Save As work as they do in the app. See [docs/web.md](docs/web.md).
+  - Pictures are opened with File → Open, File → Open Folder… (all the pictures of a folder, for the arrow keys) or by dropping files or a folder on the window. They are kept in the browser (IndexedDB), with the recent pictures and the settings, so they are still there after a reload and in a new tab.
+  - What is saved (Save As, overwriting, a selection, exported frames) is also downloaded. The questions and the Save dialog are drawn by the page; the menu bar is the app's own menu, drawn at the top of the page, with its shortcuts.
+  - The chat with Claude talks to the Claude API from the page with your own API key (AI → AI Provider and Key…, kept in the browser only), with the same picture tools as the app, and web search when AI → Web search and fetch is on.
+  - Not in the browser: scanning, and the control mode for other programs. Printing uses the browser's print dialog.
+
+### Changed
+
+- The questions about unsaved changes, overwriting and saving an animation have the three buttons of the macOS version in the web version too (on Linux they are still two questions with Yes and No).
+
 ## 0.54.0 – 2026-10-29
 
 ### Added

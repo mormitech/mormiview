@@ -64,7 +64,7 @@ func (a *App) askDiscard(name, action string) discardChoice {
 	switch runtime.GOOS {
 	case "windows":
 		return windowsDiscardChoice("Unsaved changes", save)
-	case "darwin":
+	case "darwin", "js": // (js: the web version, whose dialogs have buttons of their own, see web_main.go)
 		res, err := wruntime.MessageDialog(a.ctx, wruntime.MessageDialogOptions{
 			Type: wruntime.QuestionDialog, Title: "Unsaved changes", Message: save,
 			Buttons: []string{"Save", "Discard", "Cancel"}, DefaultButton: "Save", CancelButton: "Cancel",
@@ -126,7 +126,7 @@ func (a *App) askLarge(w, h, pw, ph int) largeChoice {
 			return pasteOver
 		}
 		return pasteCancel
-	case "darwin":
+	case "darwin", "js": // (js: the web version, whose dialogs have buttons of their own, see web_main.go)
 		res, err := wruntime.MessageDialog(a.ctx, wruntime.MessageDialogOptions{
 			Type: wruntime.QuestionDialog, Title: "Large image content is about to be pasted", Message: msg,
 			Buttons: []string{"Paste as new image", "Paste into current image", "Cancel"}, DefaultButton: "Paste as new image", CancelButton: "Cancel",

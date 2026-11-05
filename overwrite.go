@@ -57,7 +57,7 @@ func (a *App) askOverwrite(name string) overwriteChoice {
 			return overwriteNew
 		}
 		return overwriteCancel
-	case "darwin":
+	case "darwin", "js": // (js: the web version, whose dialogs have buttons of their own, see web_main.go)
 		res, err := wruntime.MessageDialog(a.ctx, wruntime.MessageDialogOptions{
 			Type: wruntime.QuestionDialog, Title: "Save changes", Message: text,
 			Buttons: []string{"Overwrite", "Save As…", "Cancel"}, DefaultButton: "Save As…", CancelButton: "Cancel",

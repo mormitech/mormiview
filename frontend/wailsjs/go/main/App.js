@@ -6,12 +6,20 @@ export function BakeFloat() {
   return window['go']['main']['App']['BakeFloat']();
 }
 
+export function ChatAPIConfig() {
+  return window['go']['main']['App']['ChatAPIConfig']();
+}
+
 export function ChatInfo() {
   return window['go']['main']['App']['ChatInfo']();
 }
 
 export function ChatLogin() {
   return window['go']['main']['App']['ChatLogin']();
+}
+
+export function ChatPrompt() {
+  return window['go']['main']['App']['ChatPrompt']();
 }
 
 export function ChatReset() {
@@ -24,6 +32,14 @@ export function ChatSend(arg1) {
 
 export function ChatStop() {
   return window['go']['main']['App']['ChatStop']();
+}
+
+export function ChatTool(arg1, arg2) {
+  return window['go']['main']['App']['ChatTool'](arg1, arg2);
+}
+
+export function ChatTools() {
+  return window['go']['main']['App']['ChatTools']();
 }
 
 export function ChooseImage() {
@@ -280,6 +296,10 @@ export function ScanImage() {
 
 export function SelectionPNG(arg1, arg2, arg3, arg4, arg5, arg6) {
   return window['go']['main']['App']['SelectionPNG'](arg1, arg2, arg3, arg4, arg5, arg6);
+}
+
+export function SetChatAPIConfig(arg1, arg2, arg3, arg4, arg5) {
+  return window['go']['main']['App']['SetChatAPIConfig'](arg1, arg2, arg3, arg4, arg5);
 }
 
 export function SetEditMode(arg1) {

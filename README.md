@@ -87,7 +87,7 @@ The sample picture is a free (CC0) photo from Unsplash, via Wikimedia Commons. T
 
 ### Chat with Claude
 
-**C** (or the speech bubble at the bottom right) opens a floating chat window over the picture. It runs the [Claude Code](https://claude.com/product/claude-code) that is installed on your computer, with your Claude subscription (no API key; the panel offers **Sign in with Claude**, which opens the browser). Ask for what you want: draw, remove a label or a stain, crop, turn, apply effects, make pixel art or an animated GIF (frame by frame, and you play and save it), or *"remove the selected part"* after you selected something. Claude looks at the picture and changes it with mormiView's tools, piece by piece, and every change can be undone. Claude gets the picture tools and web search and fetch, and nothing else (no files, no shell), and the chat is the one place where a picture leaves your computer, only when you ask. See [docs/help.md](docs/help.md#chat-with-claude) and, for how it works, [docs/chat.md](docs/chat.md).
+**C** (or the speech bubble at the bottom right) opens a floating chat window over the picture. It runs the [Claude Code](https://claude.com/product/claude-code) that is installed on your computer, with your Claude subscription (no API key; the panel offers **Sign in with Claude**, which opens the browser). Or, chosen in AI → AI Provider and Key… (or with the pencil at the top of the panel), it talks to the Claude API with your API key or to OpenRouter with your OpenRouter key, with the same tools. Ask for what you want: draw, remove a label or a stain, crop, turn, apply effects, make pixel art or an animated GIF (frame by frame, and you play and save it), or *"remove the selected part"* after you selected something. Claude looks at the picture and changes it with mormiView's tools, piece by piece, and every change can be undone. Claude gets the picture tools and web search and fetch, and nothing else (no files, no shell), and the chat is the one place where a picture leaves your computer, only when you ask. See [docs/help.md](docs/help.md#chat-with-claude) and, for how it works, [docs/chat.md](docs/chat.md).
 
 ### Saving, closing, deleting
 
@@ -118,6 +118,11 @@ Download the package for your system from the [releases](https://github.com/morm
 | **Linux** (x64) | `mormiview-<version>-linux-amd64.deb` (Debian, Ubuntu: `sudo apt install ./mormiview-….deb`), `mormiview-<version>-linux-x86_64.rpm` (Fedora, openSUSE: `sudo dnf install ./mormiview-….rpm`), or the `.tar.gz` with `install.sh` |
 
 The app is not code-signed or notarized yet, so macOS asks you to confirm the first start (right-click → Open). Or build it yourself (below).
+
+**In the browser.** mormiView also runs as a static web page, with no install and no server behind it: the same Go code, built for
+WebAssembly, and the same page. Open pictures (or a whole folder) with File → Open or by dropping them on the window; they stay in your
+browser, and what you save is downloaded. Everything works as in the app except scanning and what needs a program of your computer; the
+chat with Claude uses your own Claude API key or OpenRouter key. See [docs/web.md](docs/web.md).
 
 <a id="open-with"></a>
 ## Open with…
@@ -151,13 +156,14 @@ On Linux also `libgtk-3-dev libwebkit2gtk-4.1-dev`, and build with `-tags webkit
 | `main.go`, `about.go` | the window, the menus per system, the `--about` window |
 | `window.go` | the screen-size gate: `fitSize` and `fitWindow` |
 | `app.go` | the methods the UI calls (the version, the window mode, Open…) and the extra windows |
-| `chat.go`, `mcp.go`, `shapes.go`, `canvas.go`, `masks.go`, `retouch.go`, `pixels_edit.go`, `saveto.go` | the chat panel (Claude Code in the background, signing in), the private tool server of a window and its tools, and what the tools do to the picture: shapes, canvas and crop, masks, clone, blend and fill |
+| `chat.go`, `chat_api.go`, `mcp.go`, `shapes.go`, `canvas.go`, `masks.go`, `retouch.go`, `pixels_edit.go`, `saveto.go` | the chat panel (Claude Code in the background, signing in), the private tool server of a window and its tools, and what the tools do to the picture: shapes, canvas and crop, masks, clone, blend and fill |
 | `revert.go` | Discard Changes |
 | `float.go`, `layer.go`, `fill.go`, `selection.go`, `selsave.go` | the lifted and moved part, the pencil stroke, a drawn line, rectangle, ellipse or text put into the picture, the paint bucket, the selection |
 | `clip.go`, `save.go`, `overwrite.go`, `discard.go`, `delete.go` | the clipboard and new images, Save As and its questions, unsaved changes, deleting |
 | `undo.go` | the history of picture states |
 | `image.go` | the picture types, opening a file (command line and the macOS open-file event), serving the picture to the web view |
 | `frontend/` | the UI (vanilla JS, built with Vite) |
+| `web_main.go`, `frontend/web/`, `scripts/build_web.sh` | the web version: the Go program for WebAssembly, and the page's stand-ins for Wails, the file system and the dialogs ([docs/web.md](docs/web.md)) |
 | `build/` | icons, macOS Info.plist, Windows manifest and version info |
 | `packaging/windows` | the Inno Setup installer script, with the Open with… registry entries |
 | `packaging/linux` | the desktop entry and `install.sh` (the .deb and .rpm are made by the workflow with fpm) |
@@ -191,7 +197,8 @@ once the SignPath application is accepted; until then the Windows builds are uns
 - Approvers: [Peter Jenei](https://github.com/mormitech)
 
 mormiView sends nothing anywhere on its own. The chat panel is the one exception: when you use it, the picture and your
-messages go to Anthropic through your own Claude Code and Claude account.
+messages go to Anthropic through your own Claude Code and Claude account, or, when you chose an API key in AI → AI Provider and Key…, to
+the Claude API or to OpenRouter (which passes them on to the model's provider) with that key.
 
 Privacy policy: [mormitech.com/privacy](https://mormitech.com/privacy/#mormitools). This program will not transfer any information
 to other networked systems unless specifically requested by the user or the person installing or operating it.
