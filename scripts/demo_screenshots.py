@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Makes the screenshots of the README and the manual with mormiView in demo mode (macOS; docs/control.md).
 
-    scripts/demo_screenshots.py SAMPLES_DIR [OUT_DIR] [APP] [hero|palette]
+    scripts/demo_screenshots.py SAMPLES_DIR [OUT_DIR] [APP] [hero|palette]   (hero: the hero and the AI provider dialog)
 
 SAMPLES_DIR holds berries.jpg, city.jpg, coast.jpg, lake.jpg, frozen-lake.jpg (free pictures, no people in them) and bounce.gif (an animation of
 our own); keep it outside your home folder: the app is started with --demo, which refuses pictures from there and shows no recent pictures, account,
@@ -61,6 +61,10 @@ def main(samples, out="docs/screenshots", app="build/bin/mormiview.app", only=""
     mc.cmd("select", x0=a[0], y0=a[1], x1=b[0], y1=b[1])
     mc.cmd("chat", text="Warm up the evening sky a little")
     shot("00-hero")
+    # the chat with an API key: the provider dialog, about to change the model (a made-up key; Cancel keeps nothing)
+    mc.cmd("aidlg", provider="openrouter", key="sk-or-v1-demo-not-a-real-key-0000000000", model="anthropic/claude-sonnet-5.5")
+    shot("22-ai-provider")
+    mc.cmd("aidlg", close=True)
     mc.cmd("chat", on=False, wait=600)
     mc.cmd("polygon", pts=[])
     mc.cmd("edit", on=False)

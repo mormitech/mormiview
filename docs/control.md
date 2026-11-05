@@ -66,6 +66,7 @@ moves a pointer or presses a key: a drawing command puts its result into the pic
 | `ctxmenu` | `sub` | the right-click menu in the middle of the picture, with a submenu (for example `Effects`) open; `closemenu` closes it |
 | `rotdlg` | `angle`, `part`, `close` | the Rotate by angle dialog, left open with an angle in it |
 | `chat` | `on`, `text` | the chat panel open (or shut), with an unsent draft in its box |
+| `aidlg` | `provider` (`""` Claude Code, `anthropic`, `openrouter`), `key`, `model`, `close` | the AI provider dialog (AI → AI Provider and Key…), left open with these in it and the model field focused; `close` cancels it, so nothing is kept |
 | `tip` | `id` | the tooltip of the element with this id |
 | `gif` / `gifplay` | `op: start|add|duplicate|delete|move|delay`; `on` or `step` | the frames of an animation; the player: play, pause, a frame back or forward |
 | `wait` / `sleep` | `ms` | a pause |
