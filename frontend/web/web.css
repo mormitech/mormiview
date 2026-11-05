@@ -3,6 +3,17 @@
 :root { --menubar-h: 30px; }
 
 /* ---- Loading ---- */
+/* Until the app has started (its style is loaded with src/main.js, after the Go program), only the loading screen shows: the page
+   under it is hidden, and the screen has its own colors, since the app's color variables are not there yet. */
+html { background:#f3f5f9; } body:not(.mv-ready) > :not(#mv-loading) { visibility:hidden; }
+#mv-loading { --bg:#f3f5f9; --muted:#5f7391; --line:#d3dae6; --accent:#1f7aea; --bad:#d63b3b; }
+#mv-loading .wm-mormi { color:#171a1c; } #mv-loading .wm-product { color:#6253ba; }
+@media (prefers-color-scheme: dark) {
+  html { background:#1b2636; }
+  #mv-loading { --bg:#1b2636; --muted:#8fa3bf; --line:#344761; --accent:#4da3ff; --bad:#ff6b6b; }
+  #mv-loading .wm-mormi { color:#e6ecf5; } #mv-loading .wm-product { color:#9a8ff0; }
+  #mv-loading img { filter:invert(1); }
+}
 #mv-loading { position:fixed; inset:0; z-index:100; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; background:var(--bg); color:var(--muted); font:14px system-ui, sans-serif; }
 #mv-loading p { margin:0; font-size:24px; font-weight:700; }
 #mv-loading .bar { width:180px; height:4px; border-radius:2px; background:var(--line); overflow:hidden; }

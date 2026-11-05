@@ -44,7 +44,9 @@ async function start() {
   await goReady;
   bind();
   document.body.classList.add('web');
-  await import('../src/main.js');
+  await import('../src/main.js'); // (in the built site this also waits until the app's style is loaded)
+  await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))); // its first frame is drawn under the loading screen
+  document.body.classList.add('mv-ready');
   loading?.remove();
 }
 
