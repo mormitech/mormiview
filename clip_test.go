@@ -261,3 +261,44 @@ func TestSaveWhatCannotBeConverted(t *testing.T) {
 		t.Error("a failed save left a file")
 	}
 }
+
+func TestPickClipboardPictureType(t *testing.T) {
+	for _, c := range []struct {
+		offered []string
+		want    string
+	}{
+		{[]string{"TARGETS", "TIMESTAMP", "MULTIPLE", "image/bmp"}, "image/bmp"}, // xrdp
+		{[]string{"image/jpeg", "image/png", "text/plain"}, "image/png"},
+		{[]string{"text/plain", "image/jpeg"}, "image/jpeg"},
+		{[]string{"text/plain"}, "image/png"},
+		{nil, "image/png"},
+	} {
+		if got := pickClipboardPictureType(c.offered); got != c.want {
+			t.Errorf("%v: got %s, want %s", c.offered, got, c.want)
+		}
+	}
+}
+
+// A 32-bit BI_RGB bitmap with a 40-byte header, as xrdp puts on the clipboard: its alpha bytes are 0, and the picture must be opaque.
+func TestClipboardBMPZeroAlphaIsOpaque(t *testing.T) {
+	const w, h = 2, 2
+	data := make([]byte, 54+w*h*4)
+	copy(data, "BM")
+	le := func(off int, v uint32) { data[off], data[off+1], data[off+2], data[off+3] = byte(v), byte(v>>8), byte(v>>16), byte(v>>24) }
+	le(2, uint32(len(data)))
+	le(10, 54)
+	le(14, 40)
+	le(18, w)
+	le(22, h)
+	data[26], data[28] = 1, 32
+	for i := 54; i < len(data); i += 4 {
+		data[i], data[i+1], data[i+2], data[i+3] = 30, 20, 10, 0 // B G R, alpha 0
+	}
+	img, format, err := image.Decode(bytes.NewReader(data))
+	if err != nil || format != "bmp" {
+		t.Fatalf("decode: %v %q", err, format)
+	}
+	if r, g, b, a := img.At(1, 1).RGBA(); r>>8 != 10 || g>>8 != 20 || b>>8 != 30 || a>>8 != 255 {
+		t.Fatalf("pixel %d %d %d %d", r>>8, g>>8, b>>8, a>>8)
+	}
+}

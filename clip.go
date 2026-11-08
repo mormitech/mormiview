@@ -230,10 +230,12 @@ func readSystemClipboardImage() (image.Image, error) {
 			`Add-Type -AssemblyName System.Windows.Forms,System.Drawing; $i = [System.Windows.Forms.Clipboard]::GetImage(); if ($i -eq $null) { exit 3 }; $i.Save('`+filepath.ToSlash(path)+`', [System.Drawing.Imaging.ImageFormat]::Png)`)
 	default:
 		toFile = false
+		// The clipboard is asked which types it offers, and the best picture type is taken: not every program offers PNG (xrdp, the
+		// clipboard of a remote desktop, offers only image/bmp).
 		if p, err := exec.LookPath("wl-paste"); err == nil && os.Getenv("WAYLAND_DISPLAY") != "" {
-			cmd = exec.Command(p, "--type", "image/png")
+			cmd = exec.Command(p, "--type", clipboardPictureType(exec.Command(p, "--list-types")))
 		} else if p, err := exec.LookPath("xclip"); err == nil {
-			cmd = exec.Command(p, "-selection", "clipboard", "-t", "image/png", "-o")
+			cmd = exec.Command(p, "-selection", "clipboard", "-t", clipboardPictureType(exec.Command(p, "-selection", "clipboard", "-t", "TARGETS", "-o")), "-o")
 		} else {
 			return nil, errors.New("to paste a picture install xclip (X11) or wl-clipboard (Wayland)")
 		}
@@ -255,4 +257,29 @@ func readSystemClipboardImage() (image.Image, error) {
 		return nil, errNoClipboardPicture
 	}
 	return img, nil
+}
+
+// clipboardPicturePreference is the order in which the picture types of a Linux clipboard are taken (all of them can be decoded).
+var clipboardPicturePreference = []string{"image/png", "image/bmp", "image/x-bmp", "image/x-ms-bmp", "image/tiff", "image/webp", "image/jpeg", "image/gif"}
+
+// clipboardPictureType runs list (it prints the types the clipboard offers, one a line) and returns the best picture type of them;
+// image/png when the list cannot be had or has none of them (then the paste says there is no picture, as before).
+func clipboardPictureType(list *exec.Cmd) string {
+	hideWindow(list)
+	out, err := list.Output()
+	if err != nil {
+		return "image/png"
+	}
+	return pickClipboardPictureType(strings.Fields(string(out)))
+}
+
+func pickClipboardPictureType(offered []string) string {
+	for _, want := range clipboardPicturePreference {
+		for _, t := range offered {
+			if strings.EqualFold(strings.TrimSpace(t), want) {
+				return t
+			}
+		}
+	}
+	return "image/png"
 }
