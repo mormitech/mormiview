@@ -3,6 +3,12 @@
 All notable changes to mcView are listed here, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and the versions are the [releases](https://github.com/mormitech/mcview/releases).
 
+## 0.57.4 – 2026-11-08
+
+### Fixed
+
+- Linux: Paste takes the picture in whatever type the clipboard offers it (PNG first, then BMP, TIFF, WebP, JPEG, GIF), not only PNG. Over a remote desktop (xrdp), where the clipboard has only image/bmp, a picture copied on the other computer now pastes.
+
 ## 0.57.3 – 2026-11-05
 
 ### Fixed
