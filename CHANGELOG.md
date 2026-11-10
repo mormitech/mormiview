@@ -3,11 +3,18 @@
 All notable changes to mcView are listed here, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and the versions are the [releases](https://github.com/mormitech/mcview/releases).
 
+## 0.57.7 – 2026-11-10
+
+### Changed
+
+- The Effects menu, too, shows only while a picture is open: without one the menu bar has File, AI and Help.
+- macOS: the Help menu no longer has the system's Search field.
+
 ## 0.57.6 – 2026-11-10
 
 ### Changed
 
-- The Edit, Image and Effects menus show only while a picture is open (desktop and web); without one the menu bar has File, AI and Help. Ctrl+V (Cmd+V) still pastes a picture from the clipboard.
+- The Edit and Image menus show only while a picture is open (desktop and web); without one the menu bar has File, Effects, AI and Help. Ctrl+V (Cmd+V) still pastes a picture from the clipboard.
 
 ## 0.57.5 – 2026-11-10
 
