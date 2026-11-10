@@ -70,6 +70,7 @@ type App struct {
 	confirmDiscard   func(name, action string) discardChoice // asks before unsaved changes are thrown away; the system's alert, except in the tests (see discard.go)
 	menuBar          *menu.Menu                              // the menu of the window (nil for the About window), put back when full screen ends
 	menuPic          int                                     // whether the menu bar shown has the menus of a picture (Edit, Image, Effects): 0 not set yet, 1 no, 2 yes
+	closeAnyItem     *menu.MenuItem                          // File → Close (off without a picture)
 	menuOff          bool                                    // the menu bar is hidden (full screen on Windows, see SetMenuBar)
 	confirmOverwrite func(name string) overwriteChoice       // asks overwrite, save as or cancel for S on a changed picture; the system's alert, except in the tests (see overwrite.go)
 	confirmLarge     func(w, h, pw, ph int) largeChoice      // asks what to do with a big clipboard picture; the system's alert, except in the tests (see discard.go)
@@ -203,11 +204,11 @@ func (a *App) titleWindow() {
 // with one that has no file (made here, or from the clipboard).
 func (a *App) updateMenuItems() {
 	a.mu.Lock()
-	del, save, closeImg, discard := a.deleteItem, a.saveItem, a.closeItem, a.discardItem
+	del, save, closeImg, closeAny, discard := a.deleteItem, a.saveItem, a.closeItem, a.closeAnyItem, a.discardItem
 	a.mu.Unlock()
 	cur := a.current()
 	changed := a.fillRecentMenu() // (another window may have opened something)
-	for item, off := range map[*menu.MenuItem]bool{del: cur.Path == "", save: cur.URL == "", closeImg: cur.URL == "", discard: !cur.Modified} {
+	for item, off := range map[*menu.MenuItem]bool{del: cur.Path == "", save: cur.URL == "", closeImg: cur.URL == "", closeAny: cur.URL == "", discard: !cur.Modified} {
 		if item != nil && item.Disabled != off {
 			item.Disabled = off
 			changed = true

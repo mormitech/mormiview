@@ -284,7 +284,9 @@ func TestClipboardBMPZeroAlphaIsOpaque(t *testing.T) {
 	const w, h = 2, 2
 	data := make([]byte, 54+w*h*4)
 	copy(data, "BM")
-	le := func(off int, v uint32) { data[off], data[off+1], data[off+2], data[off+3] = byte(v), byte(v>>8), byte(v>>16), byte(v>>24) }
+	le := func(off int, v uint32) {
+		data[off], data[off+1], data[off+2], data[off+3] = byte(v), byte(v>>8), byte(v>>16), byte(v>>24)
+	}
 	le(2, uint32(len(data)))
 	le(10, 54)
 	le(14, 40)

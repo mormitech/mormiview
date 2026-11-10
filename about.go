@@ -64,8 +64,9 @@ func fileMenu(app *App, m *menu.Menu) {
 	app.discardItem.Disabled = true
 	app.deleteItem = file.AddText("Delete Image…", nil, func(*menu.CallbackData) { app.emit("menu-delete") }) // (the key D does the same; no accelerator, so that a plain letter is not taken from the menu)
 	app.saveItem.Disabled, app.closeItem.Disabled = true, true
-	app.deleteItem.Disabled = true                                                                  // (until a picture is shown, see updateMenuItems)
-	file.AddText("Close", keys.CmdOrCtrl("w"), func(*menu.CallbackData) { app.emit("menu-close") }) // the picture, or the window when there is none (the UI knows)
+	app.deleteItem.Disabled = true                                                                                     // (until a picture is shown, see updateMenuItems)
+	app.closeAnyItem = file.AddText("Close", keys.CmdOrCtrl("w"), func(*menu.CallbackData) { app.emit("menu-close") }) // the picture (the UI knows)
+	app.closeAnyItem.Disabled = true                                                                                   // greyed out without a picture; Cmd+W (Ctrl+W) then closes the window, through the page's keys
 	if runtime.GOOS != "darwin" {
 		file.AddSeparator()
 		file.AddText("Exit", keys.CmdOrCtrl("q"), func(*menu.CallbackData) { wruntime.Quit(app.ctx) })

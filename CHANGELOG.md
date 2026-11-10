@@ -3,6 +3,12 @@
 All notable changes to mcView are listed here, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and the versions are the [releases](https://github.com/mormitech/mcview/releases).
 
+## 0.57.8 – 2026-11-10
+
+### Changed
+
+- File → Close is greyed out while no picture is open; Cmd+W (Ctrl+W) still closes the empty window.
+
 ## 0.57.7 – 2026-11-10
 
 ### Changed
