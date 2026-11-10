@@ -7,7 +7,7 @@ and the versions are the [releases](https://github.com/mormitech/mcview/releases
 
 ### Changed
 
-- The Edit and Image menus show only while a picture is open (desktop and web); without one the menu bar has File, Effects, AI and Help. Ctrl+V (Cmd+V) still pastes a picture from the clipboard.
+- The Edit, Image and Effects menus show only while a picture is open (desktop and web); without one the menu bar has File, AI and Help. Ctrl+V (Cmd+V) still pastes a picture from the clipboard.
 
 ## 0.57.5 – 2026-11-10
 
