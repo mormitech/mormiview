@@ -322,7 +322,7 @@ window.mvHost = {
     window.close();
   },
   openURL(u) { window.open(u, '_blank', 'noopener'); },
-  openAbout() { window.open(`${location.pathname}?about`, 'mormiview-about', 'popup,width=460,height=560'); },
+  openAbout() { window.dispatchEvent(new Event('mv-about')); }, // a dialog over the page (src/main.js), not a tab of its own
   async openWindow(path) {
     await flush(); // the new tab reads the files from IndexedDB
     window.open(`${location.pathname}${path ? `?open=${encodeURIComponent(path)}` : '?new'}`, '_blank');

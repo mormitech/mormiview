@@ -69,6 +69,8 @@ type App struct {
 	openWindow       func(path string) error                 // starts a window for a picture; spawn, except in the tests
 	confirmDiscard   func(name, action string) discardChoice // asks before unsaved changes are thrown away; the system's alert, except in the tests (see discard.go)
 	menuBar          *menu.Menu                              // the menu of the window (nil for the About window), put back when full screen ends
+	menuPic          int                                     // whether the menu bar shown has the menus of a picture (Edit, Image, Effects): 0 not set yet, 1 no, 2 yes
+	menuOff          bool                                    // the menu bar is hidden (full screen on Windows, see SetMenuBar)
 	confirmOverwrite func(name string) overwriteChoice       // asks overwrite, save as or cancel for S on a changed picture; the system's alert, except in the tests (see overwrite.go)
 	confirmLarge     func(w, h, pw, ph int) largeChoice      // asks what to do with a big clipboard picture; the system's alert, except in the tests (see discard.go)
 	fl               *floatSession                           // the part of the picture that is lifted and dropped somewhere else, not applied yet (see float.go)
@@ -140,8 +142,12 @@ func (a *App) SetMenuBar(show bool) {
 	if a.ctx == nil || a.menuBar == nil || runtime.GOOS != "windows" {
 		return
 	}
+	a.mu.Lock()
+	a.menuOff = !show
+	pic := a.menuPic == 2
+	a.mu.Unlock()
 	if show {
-		wruntime.MenuSetApplicationMenu(a.ctx, a.menuBar)
+		wruntime.MenuSetApplicationMenu(a.ctx, a.shownMenu(pic))
 	} else {
 		wruntime.MenuSetApplicationMenu(a.ctx, menu.NewMenu())
 	}
@@ -216,9 +222,46 @@ func (a *App) updateMenuItems() {
 			changed = true
 		}
 	}
+	a.mu.Lock()
+	pic := 1 + boolInt(cur.URL != "")
+	swap := a.menuBar != nil && pic != a.menuPic // Edit, Image and Effects come and go with the picture
+	a.menuPic = pic
+	off := a.menuOff
+	a.mu.Unlock()
+	if swap {
+		if !off {
+			wruntime.MenuSetApplicationMenu(a.ctx, a.shownMenu(pic == 2))
+		}
+		return
+	}
 	if changed {
 		wruntime.MenuUpdateApplicationMenu(a.ctx)
 	}
+}
+
+// pictureMenus are the menus that only work on a picture: without one the menu bar does not show them.
+var pictureMenus = map[string]bool{"Edit": true, "Image": true, "Effects": true}
+
+// shownMenu is the menu bar to show: all of a.menuBar with a picture, else without pictureMenus. The items are the same ones, so what
+// updateMenuItems turns on and off is in both. (Wails cannot hide a menu of the bar itself, so the bar is set again.)
+func (a *App) shownMenu(pic bool) *menu.Menu {
+	if pic {
+		return a.menuBar
+	}
+	m := menu.NewMenu()
+	for _, item := range a.menuBar.Items {
+		if !pictureMenus[item.Label] {
+			m.Append(item)
+		}
+	}
+	return m
+}
+
+func boolInt(b bool) int {
+	if b {
+		return 1
+	}
+	return 0
 }
 
 func (a *App) sizeMark() string {

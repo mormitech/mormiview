@@ -56,6 +56,18 @@ export function messageDialog(o) {
   }, cancel);
 }
 
+// infoDialog shows html in a box with a close button (×, Esc, or a click beside it); for About in the web version.
+export function infoDialog(html, cls = '') {
+  return modal((box, done) => {
+    box.classList.add('mv-info');
+    if (cls) box.classList.add(cls);
+    box.innerHTML = `<button type="button" class="mv-close" aria-label="Close" title="Close (Esc)">×</button>${html}`;
+    box.querySelector('.mv-close').onclick = () => done();
+    box.onsubmit = (ev) => { ev.preventDefault(); done(); };
+    box.parentElement.addEventListener('mousedown', (ev) => { if (ev.target === ev.currentTarget) done(); });
+  });
+}
+
 const FORMATS = [['png', 'PNG'], ['jpg', 'JPEG'], ['gif', 'GIF'], ['bmp', 'BMP'], ['tiff', 'TIFF']];
 
 // saveDialog asks for the name of the file to save; what is saved is downloaded (memfs.js). The answer is the name, or '' for cancel.

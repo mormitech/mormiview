@@ -4,6 +4,7 @@ import {BrowserOpenURL, EventsOn} from '../wailsjs/runtime/runtime';
 import logo from './assets/mormitech-mark.svg';
 import {aiDialog, initChat, toggleChat} from './chat.js';
 import {initTips} from './tooltip.js';
+import {infoDialog} from './dialogs.js';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
@@ -19,19 +20,29 @@ const COFFEE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 9.5h12
 const REPO = 'https://github.com/mormitech/mormiview';
 const WEB = document.body.classList.contains('web'); // the web version (frontend/web): the same page, started in a browser
 
+async function aboutHTML() {
+  return `<img class="logo" src="${logo}" alt="" width="132">
+    <h1><span class="wordmark"><span class="wm-mormi">mormi</span><span class="wm-product">View</span></span></h1>
+    <p class="muted">Version ${esc(await Version())}</p>
+    <p>${WEB ? 'A picture viewer and editor that runs in your browser. Your pictures stay in this browser; only the AI chat, when you use it, sends them to the provider you chose (the Claude API or OpenRouter).' : 'A picture viewer for macOS, Windows and Linux. Open a picture from your file manager (Open with…) or with File → Open.'}</p>
+    <p class="muted">Free and open source, MIT license. No accounts, no ads, no telemetry.</p>
+    <p class="links"><a href="${REPO}">Website and source code</a><a href="${REPO}/issues">Report a problem</a><a href="${REPO}/blob/main/LICENSE">License</a><a class="coffee" href="https://mormitech.com/support-us/">${COFFEE}Buy me a coffee</a></p>`;
+}
+
 async function showAbout() {
   document.body.classList.add('about-mode');
   window.addEventListener('keydown', (ev) => { // the About window has no menu: Cmd+W (Ctrl+W) and Esc close it
     if (ev.key === 'Escape' || ((ev.metaKey || ev.ctrlKey) && !ev.altKey && (ev.key === 'w' || ev.key === 'W'))) { ev.preventDefault(); CloseWindow(); }
   });
   $('about').hidden = false;
-  $('about').innerHTML = `<img class="logo" src="${logo}" alt="" width="132">
-    <h1><span class="wordmark"><span class="wm-mormi">mormi</span><span class="wm-product">View</span></span></h1>
-    <p class="muted">Version ${esc(await Version())}</p>
-    <p>${WEB ? 'A picture viewer and editor that runs in your browser. Your pictures stay in this browser; only the Claude chat, when you use it, sends them to the Claude API.' : 'A picture viewer for macOS, Windows and Linux. Open a picture from your file manager (Open with…) or with File → Open.'}</p>
-    <p class="muted">Free and open source, MIT license. No accounts, no ads, no telemetry.</p>
-    <p class="links"><a href="${REPO}">Website and source code</a><a href="${REPO}/issues">Report a problem</a><a href="${REPO}/blob/main/LICENSE">License</a><a class="coffee" href="https://mormitech.com/support-us/">${COFFEE}Buy me a coffee</a></p>`;
+  $('about').innerHTML = await aboutHTML();
 }
+
+// In the web version About is a dialog over the page (web/host.js sends mv-about), not a window of its own.
+window.addEventListener('mv-about', async () => {
+  if (document.querySelector('.mv-about')) return;
+  infoDialog(`<div id="about-body">${await aboutHTML()}</div>`, 'mv-about');
+});
 
 window.addEventListener('error', (e) => Trace(`error: ${e.message} at ${e.lineno}:${e.colno}`)); // (with MORMIVIEW_TRACE set, a failure of the page shows in the trace)
 window.addEventListener('unhandledrejection', (e) => Trace(`rejection: ${e.reason}`));

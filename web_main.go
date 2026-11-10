@@ -253,7 +253,7 @@ func (f *webFrontend) menuClick(id int) {
 		return
 	}
 	switch it.Label {
-	case "About mormiView": // a window of its own on the desktop (another copy of the program): a tab here
+	case "About mormiView": // a window of its own on the desktop (another copy of the program): a dialog over the page here
 		host("openAbout")
 		return
 	}

@@ -35,7 +35,9 @@ func appMenu(app *App) *menu.Menu {
 		effectsMenu(app, m)
 		aiMenu(app, m)
 		m.Append(menu.WindowMenu())
-		m.AddSubmenu("Help").AddText("mormiView Help", nil, func(*menu.CallbackData) { app.openHelp() }) // the last menu, where macOS has it
+		// the last menu, where macOS has it. Its title ends in a zero-width space: macOS puts its own Search field into a menu called
+		// exactly "Help" (it looks through the menus, and only mormiView Help would be found).
+		m.AddSubmenu("Help\u200b").AddText("mormiView Help", nil, func(*menu.CallbackData) { app.openHelp() })
 		return m
 	}
 	fileMenu(app, m)
