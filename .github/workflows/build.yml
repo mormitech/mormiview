@@ -32,7 +32,14 @@ jobs:
           node-version: 24
       - name: Linux dependencies
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev
+        # (an Ubuntu mirror sometimes hangs: each try gets 5 minutes, and there are three)
+        run: |
+          for i in 1 2 3; do
+            sudo timeout 300 apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 update &&
+              sudo timeout 300 apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 install -y libgtk-3-dev libwebkit2gtk-4.1-dev && exit 0
+            echo "apt try $i failed"; sleep 10
+          done
+          exit 1
       - run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
       # The Go code embeds the built frontend, so it has to exist before `go vet` and `go test`.
       - run: npm ci && npm run build

@@ -3,6 +3,13 @@
 All notable changes to mcView are listed here, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and the versions are the [releases](https://github.com/mormitech/mcview/releases).
 
+## 0.57.11 – 2026-11-10
+
+### Changed
+
+- Select: **Cmd** on a Mac, **Ctrl** on Windows and Linux (not Shift any more) makes a drag move or stretch the selected part of the image instead of only the frame.
+- **Shift** on a corner keeps the proportions: of the frame on its own, and of the selected part together with Cmd/Ctrl.
+
 ## 0.57.10 – 2026-11-10
 
 ### Changed
