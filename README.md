@@ -66,8 +66,8 @@ The sample picture is a free (CC0) photo from Unsplash, via Wikimedia Commons. T
 **E** (or **Tab**) turns edit mode on and off; the title says `[edit]`, the status capsule shows an **Edit** label, and the tool rail (Select, Polygon select, Pencil, Line, Rectangle, Ellipse, Fill, Text, Pick) and the bottom bar appear. The **✕** at the bottom right closes the picture. Edit mode needs a picture:
 **File → Create Image** makes a new white 1280 × 720 one and starts it in edit mode; **hold Shift** (or press **Shift+N**) to choose the size and the background first. A blank image, and a picture pasted from the clipboard, count as unchanged: they close without a question until you do something to them.
 
-- **Select** (default): drag an edge or the inside of the selection to move or resize just the frame; hold **Shift** and drag to stretch or move the selected part itself; the place it came from turns white
-  (transparent in a picture that can have it). **Shift** and drag moves just the frame. **Ctrl+V** lays the clipboard picture over this one as a floating part you can drag and stretch
+- **Select** (default): drag an edge or the inside of the selection to move or resize just the frame; hold **Cmd** (Mac) or **Ctrl** and drag to stretch or move the selected part itself (**Shift** on a corner keeps the proportions); the place it came from turns white
+  (transparent in a picture that can have it). **Ctrl+V** lays the clipboard picture over this one as a floating part you can drag and stretch
   (Delete, Backspace or Esc take it away; a click beside it lays it down).
 - **Polygon select**: draw round any shape free-hand; when you let go, the end joins the start and mormiView turns the line into a polygon (a few corners, within about a pixel of what you drew). Holding the **right mouse button** does the same with the Select tool. **Delete** fills it with the second color, **Ctrl+C** copies what is inside it, **Esc** lets it go (Esc or a right click drops a selection that is still being drawn, the rectangle too).
 - **Pencil**: drag to draw; left button the first color, right button the second. The ribbon above the bottom bar sets the width.

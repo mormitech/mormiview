@@ -1391,7 +1391,7 @@ function renderSelection() {
   el.classList.toggle('drawing', !!(view.selDrag || view.tdrag)); // while the button is down the dashes stand still; set, they move
   el.classList.toggle('copied', copiedKey !== null && copiedKey === selKey());
   el.classList.toggle('content', view.hlMode === 'content');
-  el.classList.toggle('movable', !!view.fl || document.body.classList.contains('shift')); // blue dashes and a move sign: a floating part moves with a plain drag, the picture under a selection with Shift
+  el.classList.toggle('movable', !!view.fl || document.body.classList.contains('lift')); // blue dashes and a move sign: a floating part moves with a plain drag, the image under a selection with Cmd (Mac) or Ctrl
   const dr = selectionRect(); el.querySelector('.dims').textContent = dr ? `${dr.w} × ${dr.h}` : '';
   const {x0, x1, y0, y1} = box;
   const tl = el.querySelector('.corner.tl'), br = el.querySelector('.corner.br'); // the first and the last pixel of the frame (both in it)
@@ -1446,9 +1446,10 @@ const RIGHT_LASSO = ['select', 'poly']; // in these the right button, held, draw
 const TOOL_CURSOR = {pen: 'crosshair', line: 'crosshair', rect: 'crosshair', ellipse: 'crosshair', fill: 'crosshair', pick: 'crosshair', text: 'text'};
 const RESIZE_CURSORS = {t: 'ns-resize', b: 'ns-resize', l: 'ew-resize', r: 'ew-resize', tl: 'nwse-resize', br: 'nwse-resize', tr: 'nesw-resize', bl: 'nesw-resize'};
 
-// Lights the edge under the pointer, in two ways: with Shift ("content": the selected part is stretched by its edges and moved by its inside; see below)
-// and without ("frame": the frame is moved and resized, the picture is not touched). It does not depend on edit mode.
-function updateHover(shift) {
+// Lights the edge under the pointer, in two ways: with Cmd on a Mac, Ctrl elsewhere ("content": the selected part is stretched by its edges and moved
+// by its inside; see below) and without ("frame": the frame is moved and resized, the image is not touched). It does not depend on edit mode.
+// (Shift is for the proportions: a corner dragged with it keeps the width to height ratio, in both ways.)
+function updateHover(lift) {
   if (view.selDrag?.edge || view.tdrag || view.drag) return;
   if (TOOL_CURSOR[tool()]) { // the cursor of a drawing tool is for the picture; beside it the pointer is an ordinary one (while a stroke is drawn it stays)
     view.hl = null; view.hlMode = '';
@@ -1458,7 +1459,7 @@ function updateHover(shift) {
   const hit = lastPointer && !view.drag ? edgeAt(lastPointer.x, lastPointer.y, true) : null;
   const was = JSON.stringify([view.hl, view.hlMode]);
   view.hl = hit;
-  view.hlMode = hit ? (shift || view.fl ? 'content' : 'frame') : ''; // Shift: the selected part itself is moved or stretched; without it the frame
+  view.hlMode = hit ? (lift || view.fl ? 'content' : 'frame') : ''; // Cmd/Ctrl: the selected part itself is moved or stretched; without it the frame
   const key = hit ? (hit.t ? 't' : hit.b ? 'b' : '') + (hit.l ? 'l' : hit.r ? 'r' : '') : '';
   $('stage').style.cursor = hit?.move || (view.hlMode === 'content' && key === 'tl') ? 'move' : key ? RESIZE_CURSORS[key] : '';
   if (was !== JSON.stringify([view.hl, view.hlMode])) renderSelection();
@@ -1575,6 +1576,10 @@ function dragTransform(ev) {
   let x0 = s.x, y0 = s.y, x1 = s.x + s.w, y1 = s.y + s.h;
   if (t.edge.move || (t.edge.t && t.edge.l)) { // the inside and the top left corner move it
     x0 = clamp(s.x + dx, 0, Math.max(0, W - s.w)); y0 = clamp(s.y + dy, 0, Math.max(0, H - s.h)); x1 = x0 + s.w; y1 = y0 + s.h;
+  } else if (ev.shiftKey && (t.edge.l || t.edge.r) && (t.edge.t || t.edge.b)) { // a corner with Shift: the proportions stay, the opposite corner stays where it is
+    const ax = t.edge.r ? s.x : s.x + s.w, ay = t.edge.b ? s.y : s.y + s.h;
+    const c = ratioCorner(ax, ay, t.edge.r ? s.x + s.w + dx : s.x + dx, t.edge.b ? s.y + s.h + dy : s.y + dy, t.edge.r ? 1 : -1, t.edge.b ? 1 : -1, s.w, s.h, W, H, true);
+    x0 = Math.min(ax, c[0]); x1 = Math.max(ax, c[0]); y0 = Math.min(ay, c[1]); y1 = Math.max(ay, c[1]);
   } else { // the others stretch it (the other edges stay where they are)
     if (t.edge.l) x0 = clamp(s.x + dx, 0, x1 - 1);
     if (t.edge.r) x1 = clamp(s.x + s.w + dx, x0 + 1, W);
@@ -1584,6 +1589,16 @@ function dragTransform(ev) {
   view.fl.dest = {x: x0, y: y0, w: x1 - x0, h: y1 - y0};
   view.sel = rectSel(view.fl.dest);
   draw();
+}
+
+// The far corner of a box that keeps the w0 × h0 proportions: the corner (ax, ay) stays, the pointer is at (bx, by) and the box grows towards (dirx, diry).
+// It follows the side that the pointer moved more and stays inside the image (W × H); whole pixels when round is true.
+function ratioCorner(ax, ay, bx, by, dirx, diry, w0, h0, W, H, round) {
+  let k = Math.max(((bx - ax) * dirx) / w0, ((by - ay) * diry) / h0);
+  k = Math.min(k, (dirx > 0 ? W - ax : ax) / w0, (diry > 0 ? H - ay : ay) / h0);
+  let w = w0 * k, h = h0 * k;
+  if (round) { w = Math.max(1, Math.round(w)); h = Math.max(1, Math.round(h)); } else { w = Math.max(1 / view.sx, w); h = Math.max(1 / view.sy, h); }
+  return [ax + dirx * w, ay + diry * h];
 }
 
 async function finishTransform() {
@@ -1683,6 +1698,8 @@ async function copySelection(auto = false) {
 // lines, which come as multiples of 120 in wheelDelta, and the trackpad in small steps of any size. A trackpad step that happens to be
 // a multiple of 120 stays a move while the trackpad is still going. Other systems: the wheel zooms, as before.
 const MAC = navigator.platform.startsWith('Mac');
+const LIFT_KEY = MAC ? 'Meta' : 'Control'; // held, a drag moves or stretches the selected part of the image, not only the frame (Ctrl+click is the right click on a Mac)
+const liftKey = (ev) => (MAC ? ev.metaKey : ev.ctrlKey);
 let lastTrackpad = 0;
 
 function isWheelNotch(ev) {
@@ -2013,7 +2030,7 @@ function beginSelection(clientX, clientY) {
   rotSession = null; // (a new frame: turning starts afresh)
   stopSelectionFlash();
   polyClear(); // (a new frame replaces a polygon)
-  const edge = edgeAt(clientX, clientY, true); // without Shift the frame alone is moved and resized, in any mode
+  const edge = edgeAt(clientX, clientY, true); // without Cmd/Ctrl the frame alone is moved and resized, in any mode
   const [qx, qy] = pointInPicture(clientX, clientY);
   if (edge) { // an edge of the frame: it is moved, not a new frame drawn
     const box = selectionBox();
@@ -2093,10 +2110,10 @@ function startViewer() {
   window.addEventListener('resize', rememberWindow);
   window.addEventListener('blur', rememberWindow);
   $('stage').addEventListener('wheel', onWheel, {passive: false});
-  $('stage').addEventListener('pointermove', (ev) => { lastPointer = {x: ev.clientX, y: ev.clientY}; readPixel(ev.clientX, ev.clientY); document.body.classList.toggle('shift', ev.shiftKey); if (!view.selDrag && !view.tdrag) updateHover(ev.shiftKey); });
+  $('stage').addEventListener('pointermove', (ev) => { lastPointer = {x: ev.clientX, y: ev.clientY}; readPixel(ev.clientX, ev.clientY); document.body.classList.toggle('shift', ev.shiftKey); document.body.classList.toggle('lift', liftKey(ev)); if (!view.selDrag && !view.tdrag) updateHover(liftKey(ev)); });
   $('stage').addEventListener('pointerleave', () => { lastPointer = null; clearPixel(); updateHover(false); });
-  window.addEventListener('keyup', (ev) => { if (ev.key === 'Shift') { document.body.classList.remove('shift'); updateHover(false); renderSelection(); } });
-  window.addEventListener('blur', () => { document.body.classList.remove('shift'); updateHover(false); renderSelection(); });
+  window.addEventListener('keyup', (ev) => { if (ev.key === 'Shift') document.body.classList.remove('shift'); if (ev.key === LIFT_KEY) { document.body.classList.remove('lift'); updateHover(false); renderSelection(); } });
+  window.addEventListener('blur', () => { document.body.classList.remove('shift', 'lift'); updateHover(false); renderSelection(); });
   $('stage').addEventListener('pointerdown', (ev) => {
     if (ev.target === $('textbox')) return; // (the text box is typed in)
     if (cancelDraw()) return; // a press while a drawing is on (the other button, where the system reports it as a press) drops it
@@ -2127,7 +2144,7 @@ function startViewer() {
     if (t === 'fill') { fillAt(ev); return; }
     if (t === 'pick') { pickColor(ev); return; }
     if (t === 'text') { startText(ev); return; }
-    if (view.sel && (ev.shiftKey || view.fl)) { // a floating part (pasted, or lifted with Shift) moves and stretches with a plain drag; the picture itself only with Shift: an edge of the selection stretches the part, its inside moves it (see above)
+    if (view.sel && (liftKey(ev) || view.fl)) { // a floating part (pasted, or lifted with Cmd/Ctrl) moves and stretches with a plain drag; the image itself only with Cmd (Mac) or Ctrl: an edge of the selection stretches the part, its inside moves it (see above)
       const edge = edgeAt(ev.clientX, ev.clientY, true);
       if (edge) { startTransform(ev, edge); return; }
     }
@@ -2165,6 +2182,13 @@ function startViewer() {
         return;
       }
       const snap = view.pixelated ? Math.round : (v) => v; // (an edge of the frame is between two pixels)
+      if (ev.shiftKey && (e.l || e.r) && (e.t || e.b)) { // a corner with Shift: the frame keeps its proportions, the opposite corner stays
+        const st = view.selDrag.start, ax = e.r ? st.x0 : st.x1, ay = e.b ? st.y0 : st.y1;
+        const c = ratioCorner(ax, ay, px, py, e.r ? 1 : -1, e.b ? 1 : -1, st.x1 - st.x0, st.y1 - st.y0, dispW(), dispH(), view.pixelated);
+        view.sel = {x0: Math.min(ax, c[0]), x1: Math.max(ax, c[0]), y0: Math.min(ay, c[1]), y1: Math.max(ay, c[1])};
+        draw();
+        return;
+      }
       if (e.l) view.sel.x0 = snap(px); if (e.r) view.sel.x1 = snap(px);
       if (e.t) view.sel.y0 = snap(py); if (e.b) view.sel.y1 = snap(py);
       draw();
@@ -2193,17 +2217,17 @@ function startViewer() {
     if (rh && ev.type === 'pointerup' && ev.button === 2 && Math.hypot(ev.clientX - rh.x, ev.clientY - rh.y) < 5) { showSelectionMenu(ev.clientX, ev.clientY); return; } // a right click on a selection (no drag): its menu
     if (poly.down) { polyUp(); return; }
     setTimeout(renderSelection, 0); // the button is up: the dashes move again
-    if (shape) { const k = shape; shape = null; finishShape(k).then(() => updateHover(ev.shiftKey)); return; } // (see the pencil below)
-    if (ink) { const k = ink; ink = null; finishInk(k).then(() => updateHover(ev.shiftKey)); return; } // the button is up: drawing stops now, not when Go is done
-    if (view.tdrag) { finishTransform().then(() => updateHover(ev.shiftKey)); return; }
+    if (shape) { const k = shape; shape = null; finishShape(k).then(() => updateHover(liftKey(ev))); return; } // (see the pencil below)
+    if (ink) { const k = ink; ink = null; finishInk(k).then(() => updateHover(liftKey(ev))); return; } // the button is up: drawing stops now, not when Go is done
+    if (view.tdrag) { finishTransform().then(() => updateHover(liftKey(ev))); return; }
     if (view.selDrag) { // a selection dragged less than 3 screen pixels is a click, not a selection
       const [fx, fy] = view.selDrag.from, moved = !!view.selDrag.edge;
       view.selDrag = null;
-      if (moved) { updateHover(ev.shiftKey); if (selectionRect()) copySelection(true); }
+      if (moved) { updateHover(liftKey(ev)); if (selectionRect()) copySelection(true); }
       else if (Math.abs(ev.clientX - fx) < 3 && Math.abs(ev.clientY - fy) < 3) { view.sel = null; draw(); }
       else if (selectionRect()) copySelection(true); // a finished selection goes to the clipboard at once
     }
-    if (view.drag) { startSpring(); view.drag = null; updateHover(ev.shiftKey); } // let go: the spring takes the pull away
+    if (view.drag) { startSpring(); view.drag = null; updateHover(liftKey(ev)); } // let go: the spring takes the pull away
   };
   $('stage').addEventListener('mousedown', (ev) => { if (ev.button === 1) ev.preventDefault(); }); // no auto-scroll cursor
   $('stage').addEventListener('pointerup', endDrag);
@@ -2213,7 +2237,8 @@ function startViewer() {
     if (ev.key === 'Escape') ev.preventDefault(); // a handled key is not passed on to the system, which leaves full screen with it (see also DisableEscapeExitsFullscreen in main.go)
     if ((ev.target instanceof HTMLInputElement && ev.target.type !== 'range') || ev.target instanceof HTMLTextAreaElement || ev.target instanceof HTMLSelectElement) return; // typing in a field is not a command
     if (polyActive() && polyKey(ev)) { ev.preventDefault(); return; }
-    if (ev.key === 'Shift') { document.body.classList.add('shift'); updateHover(true); renderSelection(); return; }
+    if (ev.key === 'Shift') { document.body.classList.add('shift'); return; }
+    if (ev.key === LIFT_KEY) { document.body.classList.add('lift'); updateHover(true); renderSelection(); return; } // Cmd (Mac) or Ctrl: the selected part itself moves
     if ((ev.ctrlKey || ev.metaKey) && !ev.altKey && (ev.key === 'c' || ev.key === 'C' || ev.key === 'Insert')) {
       ev.preventDefault(); copySelection(); return; // Ctrl+C, Cmd+C and Ctrl+Insert
     }
