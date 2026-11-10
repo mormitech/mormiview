@@ -12,3 +12,15 @@
 .mv-box .mv-btns { display:flex; justify-content:flex-end; gap:8px; margin-top:16px; }
 .mv-box button.primary { background:var(--accent); color:var(--accent-text); border-color:var(--accent); }
 
+.mv-box.mv-info { position:relative; }
+.mv-box .mv-close { position:absolute; top:8px; right:8px; width:28px; height:28px; padding:0; border:0; border-radius:6px; background:none; color:var(--muted); font-size:20px; line-height:1; cursor:pointer; }
+.mv-box .mv-close:hover { background:var(--btn); color:var(--text); }
+.mv-box.mv-about { width:min(400px, calc(100vw - 32px)); padding:0; animation:mv-pop .16s ease-out; }
+.mv-box.mv-about #about-body { display:flex; flex-direction:column; align-items:center; text-align:center; gap:4px; padding:30px 28px 26px; }
+.mv-box.mv-about img.logo { height:auto; margin-bottom:6px; } .mv-box.mv-about h1 { margin:6px 0 0; font-size:24px; }
+.mv-box.mv-about p { margin:6px 0; max-width:340px; line-height:1.45; }
+.mv-box.mv-about .links { display:grid; gap:6px; margin-top:12px; }
+.mv-box.mv-about a.coffee { display:inline-flex; align-items:center; justify-content:center; gap:6px; } .mv-box.mv-about a.coffee svg { width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+@media (prefers-color-scheme: dark) { .mv-box.mv-about img.logo { filter:invert(1); } }
+@keyframes mv-pop { from { opacity:0; transform:translateY(6px) scale(.98); } }
+.mv-modal:has(.mv-about) { backdrop-filter:blur(2px); }

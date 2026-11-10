@@ -34,7 +34,7 @@ mormiView release bumps that file.
 | The asset server serves `/image/N` from `imageHandler` | the page asks `imageHandler` for it (`mvServe`) and shows it as a `blob:` URL |
 | The disk | `frontend/web/memfs.js`: Node's `fs` API, which Go's `os` uses on WebAssembly, in memory and in IndexedDB (`/home/user`; `/tmp` is not kept). A picture written outside the settings is also downloaded |
 | The system clipboard | `readClipboardImage` (clip.go) is set to the browser's clipboard: the picture of a Ctrl+V paste, or `navigator.clipboard.read()` |
-| One process per window | a tab per window (File → New Window, About) |
+| One process per window | a tab per window (File → New Window); About is a dialog over the page |
 | Chat: Claude Code with a private MCP server | `frontend/src/chat-api.js` (shared with the desktop, where it is one of the providers): the Claude API from the page with the user's API key, or OpenRouter (`frontend/src/openrouter.js`, its chat completions API) with the user's OpenRouter key; the same tools and system prompt through the Go methods of `chat_api.go` |
 
 The shared code knows nothing of the browser except a few small things: `emitEvent` and `readClipboardImage` are variables, the questions
