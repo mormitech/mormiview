@@ -3,6 +3,12 @@
 All notable changes to mcView are listed here, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and the versions are the [releases](https://github.com/mormitech/mcview/releases).
 
+## 0.58.1 – 2026-11-10
+
+### Changed
+
+- Help and README describe the canvas grips.
+
 ## 0.58.0 – 2026-11-10
 
 ### Added
