@@ -3,6 +3,12 @@
 All notable changes to mcView are listed here, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and the versions are the [releases](https://github.com/mormitech/mcview/releases).
 
+## 0.58.0 – 2026-11-10
+
+### Added
+
+- Canvas grips, as in Paint: in edit mode, with nothing selected, the image has a grip in the middle of each edge and on each corner. Dragging one out adds room to the canvas on that side (in the background color, or transparent when the image has transparent parts); dragging it in cuts the image there. A dashed frame shows the new size while dragging. One step of the history.
+
 ## 0.57.12 – 2026-11-10
 
 ### Fixed
