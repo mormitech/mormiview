@@ -145,7 +145,7 @@ func (a *App) fillRecentMenu() bool {
 		sub.AddText("No recent pictures", nil, nil).Disabled = true
 	} else {
 		sub.AddSeparator()
-		sub.AddText("Clear Menu", nil, func(*menu.CallbackData) { a.ClearRecent() })
+		sub.AddText("Clear Recent Pictures", nil, func(*menu.CallbackData) { a.ClearRecent() })
 	}
 	return true
 }
