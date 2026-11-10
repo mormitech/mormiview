@@ -31,7 +31,7 @@ func (a *App) SelectionPNG(x, y, w, h, dispW, dispH int) (string, error) {
 		return "", nil // not the picture the web view shows
 	}
 	if w < 1 || h < 1 || x < 0 || y < 0 || x+w > dw || y+h > dh {
-		return "", fmt.Errorf("the selection %d,%d %d × %d is not inside the picture", x, y, w, h)
+		return "", fmt.Errorf("the selection %d,%d %d × %d is not inside the image", x, y, w, h)
 	}
 	var out image.Image
 	if sub, ok := pc.img.(interface {
@@ -123,7 +123,7 @@ func copyImageFile(path string) error {
 		} else if p, err := exec.LookPath("xclip"); err == nil {
 			cmd = exec.Command(p, "-selection", "clipboard", "-t", "image/png", "-i", path)
 		} else {
-			return errors.New("to copy a picture install xclip (X11) or wl-clipboard (Wayland)")
+			return errors.New("to copy an image install xclip (X11) or wl-clipboard (Wayland)")
 		}
 	}
 	hideWindow(cmd)

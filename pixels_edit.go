@@ -40,7 +40,7 @@ func (a *App) PaintPixels(rot int, list string) (ImageInfo, error) {
 		return ImageInfo{}, err
 	}
 	if base == nil {
-		return ImageInfo{}, fmt.Errorf("there is no picture in this window")
+		return ImageInfo{}, fmt.Errorf("there is no image in this window")
 	}
 	b := base.Bounds()
 	for i, p := range px {
@@ -55,7 +55,7 @@ func (a *App) PaintPixels(rot int, list string) (ImageInfo, error) {
 			return ImageInfo{}, err
 		}
 		if !image.Pt(int(x), int(y)).In(b) {
-			return ImageInfo{}, fmt.Errorf("the pixel %d,%d is outside the picture (%d × %d)", int(x), int(y), b.Dx(), b.Dy())
+			return ImageInfo{}, fmt.Errorf("the pixel %d,%d is outside the image (%d × %d)", int(x), int(y), b.Dx(), b.Dy())
 		}
 		base.SetNRGBA(int(x), int(y), c)
 	}
@@ -68,7 +68,7 @@ func (a *App) PaintPixels(rot int, list string) (ImageInfo, error) {
 // NewBlankColor is NewBlank with a color (#rrggbbaa; transparent is alpha 0): the picture of this window is new, w × h, and has no file yet.
 func (a *App) NewBlankColor(w, h int, rgba string) error {
 	if w < 1 || h < 1 || w*h > maxPixels {
-		return fmt.Errorf("a picture of %d × %d is too small or too big (up to %d pixels)", w, h, maxPixels)
+		return fmt.Errorf("an image of %d × %d is too small or too big (up to %d pixels)", w, h, maxPixels)
 	}
 	c, err := parseRGBA(rgba)
 	if err != nil {

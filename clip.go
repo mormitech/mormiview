@@ -83,7 +83,7 @@ func (a *App) ClipboardHasImage() bool {
 // NewBlank makes a new picture of w × h pixels, white or transparent, the picture of this window (it has no file yet, like a clipboard picture).
 func (a *App) NewBlank(w, h int, transparent bool) error {
 	if w < 1 || h < 1 || w*h > maxPixels {
-		return fmt.Errorf("a picture of %d × %d is too small or too big", w, h)
+		return fmt.Errorf("an image of %d × %d is too small or too big", w, h)
 	}
 	n := image.NewNRGBA(image.Rect(0, 0, w, h))
 	if !transparent {
@@ -100,7 +100,7 @@ func (a *App) NewBlank(w, h int, transparent bool) error {
 func (a *App) setClip(img image.Image) error {
 	b := img.Bounds()
 	if b.Dx() < 1 || b.Dy() < 1 || b.Dx()*b.Dy() > maxPixels {
-		return fmt.Errorf("the picture on the clipboard is %d × %d: too small or too big", b.Dx(), b.Dy())
+		return fmt.Errorf("the image on the clipboard is %d × %d: too small or too big", b.Dx(), b.Dy())
 	}
 	n := image.NewNRGBA(image.Rect(0, 0, b.Dx(), b.Dy())) // the colors as they are, not premultiplied
 	draw.Draw(n, n.Bounds(), img, b.Min, draw.Src)
@@ -166,7 +166,7 @@ func (a *App) shownPixels(rot int) (*image.NRGBA, error) {
 		return nil, err
 	}
 	if source != "go" {
-		return nil, fmt.Errorf("mormiView cannot change %s: it can only paste into JPEG, PNG, GIF, BMP, WebP and TIFF pictures", a.current().Name)
+		return nil, fmt.Errorf("mormiView cannot change %s: it can only paste into JPEG, PNG, GIF, BMP, WebP and TIFF images", a.current().Name)
 	}
 	return turnImage(shownImage(pc), rot), nil
 }
@@ -203,7 +203,7 @@ func turnImage(src image.Image, quarters int) *image.NRGBA {
 // pasteImage is Edit → Paste. It is the UI that knows the selection and the pointer, so the menu only tells it to paste.
 func (a *App) pasteImage() { a.emit("menu-paste") }
 
-var errNoClipboardPicture = errors.New("there is no picture on the clipboard")
+var errNoClipboardPicture = errors.New("there is no image on the clipboard")
 
 // readClipboardImage asks the system for the picture on its clipboard (the web build puts the browser's clipboard in, see web_main.go).
 var readClipboardImage = readSystemClipboardImage
@@ -237,7 +237,7 @@ func readSystemClipboardImage() (image.Image, error) {
 		} else if p, err := exec.LookPath("xclip"); err == nil {
 			cmd = exec.Command(p, "-selection", "clipboard", "-t", clipboardPictureType(exec.Command(p, "-selection", "clipboard", "-t", "TARGETS", "-o")), "-o")
 		} else {
-			return nil, errors.New("to paste a picture install xclip (X11) or wl-clipboard (Wayland)")
+			return nil, errors.New("to paste an image install xclip (X11) or wl-clipboard (Wayland)")
 		}
 	}
 	hideWindow(cmd)

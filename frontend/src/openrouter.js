@@ -120,11 +120,11 @@ async function answer(calls, signal) {
     const texts = [];
     for (const c of r.content || []) {
       if (c.type === 'text' && c.text) texts.push(c.text);
-      else if (c.type === 'image') { pics.push({type: 'image_url', image_url: {url: `data:${c.mimeType || 'image/png'};base64,${c.data}`}}); texts.push('(the picture is in the next message)'); }
+      else if (c.type === 'image') { pics.push({type: 'image_url', image_url: {url: `data:${c.mimeType || 'image/png'};base64,${c.data}`}}); texts.push('(the image is in the next message)'); }
     }
     out.push({role: 'tool', tool_call_id: call.id, content: texts.join('\n') || 'done'});
   }
-  if (pics.length) out.push({role: 'user', content: [{type: 'text', text: 'The pictures the tools answered with:'}, ...pics]});
+  if (pics.length) out.push({role: 'user', content: [{type: 'text', text: 'The images the tools answered with:'}, ...pics]});
   return out;
 }
 

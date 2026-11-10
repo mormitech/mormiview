@@ -32,7 +32,7 @@ func (a *App) SaveToPath(path string, rot int, overwrite bool) (string, error) {
 		return "", fmt.Errorf("%s exists already", path)
 	}
 	if cur := a.current(); cur.URL == "" {
-		return "", fmt.Errorf("there is no picture to save")
+		return "", fmt.Errorf("there is no image to save")
 	}
 	return a.saveTo(path, rot)
 }

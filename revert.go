@@ -12,7 +12,7 @@ import (
 func (a *App) DiscardChanges() (ImageInfo, error) {
 	cur := a.current()
 	if cur.URL == "" {
-		return ImageInfo{}, fmt.Errorf("there is no picture")
+		return ImageInfo{}, fmt.Errorf("there is no image")
 	}
 	if !cur.Modified {
 		return a.Image(), nil
@@ -37,7 +37,7 @@ func (a *App) DiscardChanges() (ImageInfo, error) {
 		}
 	default:
 		a.mu.Unlock()
-		return ImageInfo{}, fmt.Errorf("there is no original of this picture to go back to")
+		return ImageInfo{}, fmt.Errorf("there is no original of this image to go back to")
 	}
 	return a.Image(), nil
 }

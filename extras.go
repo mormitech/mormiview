@@ -30,7 +30,7 @@ func (a *App) diffCommand(m map[string]any) (map[string]any, error) {
 	res := map[string]any{"ok": true, "size": []int{nb.Dx(), nb.Dy()}, "originalSize": []int{ob.Dx(), ob.Dy()}}
 	if nb.Dx() != ob.Dx() || nb.Dy() != ob.Dy() {
 		res["same"] = false
-		res["note"] = "the picture has another size than the file, so the pixels cannot be compared one by one"
+		res["note"] = "the image has another size than the file, so the pixels cannot be compared one by one"
 		return res, nil
 	}
 	changed, sum := 0, 0.0
@@ -63,7 +63,7 @@ func (a *App) diffCommand(m map[string]any) (map[string]any, error) {
 func (a *App) folderCommand(m map[string]any) (map[string]any, error) {
 	cur := a.current()
 	if cur.Path == "" {
-		return nil, fmt.Errorf("this picture has no file, so there is no folder to list")
+		return nil, fmt.Errorf("this image has no file, so there is no folder to list")
 	}
 	names, err := listPictures(cur.Dir)
 	if err != nil {

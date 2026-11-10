@@ -15,11 +15,11 @@ import (
 func (a *App) DrawLayer(rot, x, y int, pngBase64 string) (ImageInfo, error) {
 	raw, err := base64.StdEncoding.DecodeString(pngBase64)
 	if err != nil {
-		return ImageInfo{}, fmt.Errorf("the drawing is not a picture")
+		return ImageInfo{}, fmt.Errorf("the drawing is not an image")
 	}
 	layer, err := png.Decode(bytes.NewReader(raw))
 	if err != nil {
-		return ImageInfo{}, fmt.Errorf("the drawing is not a PNG picture")
+		return ImageInfo{}, fmt.Errorf("the drawing is not a PNG image")
 	}
 	base, err := a.shownPixels(rot)
 	if err != nil {

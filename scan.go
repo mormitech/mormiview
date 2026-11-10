@@ -96,7 +96,7 @@ func (a *App) ScanImage() error {
 func (a *App) setScan(img image.Image, file string) error {
 	b := img.Bounds()
 	if b.Dx() < 1 || b.Dy() < 1 || b.Dx()*b.Dy() > maxPixels {
-		return errors.New("the scanned picture is too small or too big")
+		return errors.New("the scanned image is too small or too big")
 	}
 	n := image.NewNRGBA(image.Rect(0, 0, b.Dx(), b.Dy()))
 	draw.Draw(n, n.Bounds(), img, b.Min, draw.Src)

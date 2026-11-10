@@ -29,7 +29,7 @@ func (a *App) DeleteImage() (string, error) {
 		return "", nil
 	}
 	if cur.Path == "" {
-		return "This picture has no file to delete", nil
+		return "This image has no file to delete", nil
 	}
 	if a.ctx == nil || !a.confirmDelete(cur.Name) {
 		return "", nil

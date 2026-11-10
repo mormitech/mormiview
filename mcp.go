@@ -44,7 +44,7 @@ func (a *App) snapshot(m map[string]any) (map[string]any, error) {
 		return nil, err
 	}
 	if img == nil {
-		return nil, fmt.Errorf("there is no picture in this window")
+		return nil, fmt.Errorf("there is no image in this window")
 	}
 	full := img.Bounds()
 	r := full
@@ -52,7 +52,7 @@ func (a *App) snapshot(m map[string]any) (map[string]any, error) {
 		x, y, w, h := num(m, "x", 0), num(m, "y", 0), num(m, "w", full.Dx()), num(m, "h", full.Dy())
 		r = image.Rect(x, y, x+w, y+h).Intersect(full)
 		if r.Empty() {
-			return nil, fmt.Errorf("the part %d,%d %d×%d is outside the picture (%d × %d)", x, y, w, h, full.Dx(), full.Dy())
+			return nil, fmt.Errorf("the part %d,%d %d×%d is outside the image (%d × %d)", x, y, w, h, full.Dx(), full.Dy())
 		}
 	}
 	var md *maskData
@@ -69,7 +69,7 @@ func (a *App) snapshot(m map[string]any) (map[string]any, error) {
 			return nil, err
 		}
 		if orig.Bounds().Dx() != full.Dx() || orig.Bounds().Dy() != full.Dy() {
-			return nil, fmt.Errorf("the picture has another size than the file (%d × %d, the file is %d × %d), so the two cannot be put side by side", full.Dx(), full.Dy(), orig.Bounds().Dx(), orig.Bounds().Dy())
+			return nil, fmt.Errorf("the image has another size than the file (%d × %d, the file is %d × %d), so the two cannot be put side by side", full.Dx(), full.Dy(), orig.Bounds().Dx(), orig.Bounds().Dy())
 		}
 		maxSide = max(maxSide/2, 16)
 	}
@@ -161,7 +161,7 @@ func renderPart(img *image.NRGBA, r image.Rectangle, maxSide, zoomWant int, outl
 func (a *App) originalPixels(turn int) (*image.NRGBA, error) {
 	path := a.current().Path
 	if path == "" {
-		return nil, fmt.Errorf("this picture has no file, so there is no original to compare with")
+		return nil, fmt.Errorf("this image has no file, so there is no original to compare with")
 	}
 	f, err := os.Open(path)
 	if err != nil {
@@ -250,7 +250,7 @@ type rpcRequest struct {
 
 var mcpVersions = []string{"2025-06-18", "2025-03-26", "2024-11-05"}
 
-const mcpInstructions = `mormiView is a picture viewer and editor, and you work on the picture of the window the user is looking at. All positions are pixels of the picture as it is shown: x to the right, y down, 0,0 is the top left pixel. Look first (get_image gives the whole picture pixel for pixel, and a small one also as text; for a big photo, snapshot scales it down and can show a part), then draw, then look again to check. To make pixel art: new_image, then set_pixels with a grid and a palette. Every drawing is one step of the window's undo history. To remove something from a photo, work as a retoucher in rounds: draw a polygon around it (snapshot with outline and zoom shows it before anything changes), cover it with clone_region from a clean place that looks like what belongs there (feather the edge), look again, hide seams with blend_edges (poisson for different brightness, color_match for a color cast, smooth for a hard line), use fill_region for small leftovers, and check each round with snapshot. The pictures are changed in memory only until save_image is called.`
+const mcpInstructions = `mormiView is an image viewer and editor, and you work on the image of the window the user is looking at. All positions are pixels of the image as it is shown: x to the right, y down, 0,0 is the top left pixel. Look first (get_image gives the whole image pixel for pixel, and a small one also as text; for a big photo, snapshot scales it down and can show a part), then draw, then look again to check. To make pixel art: new_image, then set_pixels with a grid and a palette. Every drawing is one step of the window's undo history. To remove something from a photo, work as a retoucher in rounds: draw a polygon around it (snapshot with outline and zoom shows it before anything changes), cover it with clone_region from a clean place that looks like what belongs there (feather the edge), look again, hide seams with blend_edges (poisson for different brightness, color_match for a color cast, smooth for a hard line), use fill_region for small leftovers, and check each round with snapshot. The images are changed in memory only until save_image is called.`
 
 func (h *chatHub) serveMCP(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
@@ -387,13 +387,13 @@ func schema(required []string, props map[string]any) map[string]any {
 }
 
 var (
-	pX     = prop("integer", "x, in pixels of the picture, from the left")
-	pY     = prop("integer", "y, in pixels of the picture, from the top")
+	pX     = prop("integer", "x, in pixels of the image, from the left")
+	pY     = prop("integer", "y, in pixels of the image, from the top")
 	pColor = prop("string", "Color: #rrggbb, #rgb or a name (red, green, blue, yellow, orange, purple, magenta, cyan, black, white, gray). Default red")
-	pWidth = prop("integer", "Line width in pixels (1 to 64). Default: about 1/250 of the picture's longer side, at least 3")
-	pSnap  = prop("boolean", "Also return a snapshot of the picture after the change (default false)")
+	pWidth = prop("integer", "Line width in pixels (1 to 64). Default: about 1/250 of the image's longer side, at least 3")
+	pSnap  = prop("boolean", "Also return a snapshot of the image after the change (default false)")
 	pMask  = prop("string", "The id of a mask (from select_by_color or create_mask) instead of the box or the polygon")
-	pPoly  = map[string]any{"type": "array", "description": "A shape [[x, y], …] of three points or more, in picture pixels, instead of the box x, y, w, h. There is no limit to the number of points: trace an outline as closely as you need, with tens or hundreds of points, along curves and corners (look with snapshot zoom and outline to read the coordinates, and check the result before you use it)", "items": map[string]any{"type": "array", "items": map[string]any{"type": "integer"}}}
+	pPoly  = map[string]any{"type": "array", "description": "A shape [[x, y], …] of three points or more, in image pixels, instead of the box x, y, w, h. There is no limit to the number of points: trace an outline as closely as you need, with tens or hundreds of points, along curves and corners (look with snapshot zoom and outline to read the coordinates, and check the result before you use it)", "items": map[string]any{"type": "array", "items": map[string]any{"type": "integer"}}}
 )
 
 func toF(v any) float64 {
@@ -460,17 +460,17 @@ func mcpTools() []toolDef { return withFrameParam(append(baseTools(), moreTools(
 
 func baseTools() []toolDef {
 	return []toolDef{
-		{"window_info", "Returns the state of the window: the name of the picture, its folder, size, whether it has unsaved changes, the tool in use, the selection and the zoom.", schema(nil, map[string]any{})},
-		{"image_info", "Tells you about the picture (or about a part of it: a box x, y, w, h, a polygon or a mask, for the color statistics): the file name (without its folder), type, size in bytes and in pixels, whether there are unsaved changes, the EXIF data of a photo (camera, lens, time, exposure, ISO, focal length; only whether there is a GPS place, not where), and how the colors are used: the number of different colors, the main colors with their share, the average color, the brightness (average, spread, darkest, brightest, a histogram), how much is transparent, whether it is gray. It reads the picture as it is now, with the changes made so far. Does not change the picture.", schema(nil, map[string]any{
-			"x": pX, "y": pY, "w": prop("integer", "width of a box to describe instead of all of the picture"), "h": prop("integer", "height of the box"), "polygon": pPoly, "mask": pMask})},
-		{"history", "Lists the steps of the window's undo history (and the named checkpoints), each with a number, what was done and who did it (the user or you). \"undoable\" are the steps undo would take back (the last one first), \"redoable\" the ones that were undone and redo brings back. Use it to see what has been done to the picture so far before you decide what to undo or redo; goto_step jumps to a step. Does not change the picture.", schema(nil, map[string]any{})},
-		{"get_image", "Returns the whole picture of the window, with the changes made so far, pixel for pixel (a PNG at its real size; one over 4096 pixels on a side is scaled down, and the text says so). A picture of up to 64 × 64 pixels is also returned as text, a palette and one string per row, which is exactly what set_pixels takes: the pixel art can be read, changed and written back.", schema(nil, map[string]any{})},
-		{"snapshot", "A scaled-down view of a big picture (a photo), or a part of it at full detail with x, y, w, h. For a small picture use get_image.", schema(nil, map[string]any{
-			"x": prop("integer", "region: left edge (default: the whole picture)"), "y": prop("integer", "region: top edge"),
+		{"window_info", "Returns the state of the window: the name of the image, its folder, size, whether it has unsaved changes, the tool in use, the selection and the zoom.", schema(nil, map[string]any{})},
+		{"image_info", "Tells you about the image (or about a part of it: a box x, y, w, h, a polygon or a mask, for the color statistics): the file name (without its folder), type, size in bytes and in pixels, whether there are unsaved changes, the EXIF data of a photo (camera, lens, time, exposure, ISO, focal length; only whether there is a GPS place, not where), and how the colors are used: the number of different colors, the main colors with their share, the average color, the brightness (average, spread, darkest, brightest, a histogram), how much is transparent, whether it is gray. It reads the image as it is now, with the changes made so far. Does not change the image.", schema(nil, map[string]any{
+			"x": pX, "y": pY, "w": prop("integer", "width of a box to describe instead of all of the image"), "h": prop("integer", "height of the box"), "polygon": pPoly, "mask": pMask})},
+		{"history", "Lists the steps of the window's undo history (and the named checkpoints), each with a number, what was done and who did it (the user or you). \"undoable\" are the steps undo would take back (the last one first), \"redoable\" the ones that were undone and redo brings back. Use it to see what has been done to the image so far before you decide what to undo or redo; goto_step jumps to a step. Does not change the image.", schema(nil, map[string]any{})},
+		{"get_image", "Returns the whole image of the window, with the changes made so far, pixel for pixel (a PNG at its real size; one over 4096 pixels on a side is scaled down, and the text says so). An image of up to 64 × 64 pixels is also returned as text, a palette and one string per row, which is exactly what set_pixels takes: the pixel art can be read, changed and written back.", schema(nil, map[string]any{})},
+		{"snapshot", "A scaled-down view of a big image (a photo), or a part of it at full detail with x, y, w, h. For a small image use get_image.", schema(nil, map[string]any{
+			"x": prop("integer", "region: left edge (default: the whole image)"), "y": prop("integer", "region: top edge"),
 			"w": prop("integer", "region: width"), "h": prop("integer", "region: height"),
 			"max":     prop("integer", "longest side of the image returned, in pixels (default 1568)"),
 			"zoom":    prop("integer", "enlarge a small part 2 to 32 times, in whole pixels, to see single pixels and seams"),
-			"outline": map[string]any{"type": "array", "description": "a shape [[x, y], …] (picture pixels) drawn in magenta over the answer only, to check a mask or a patch before changing anything", "items": map[string]any{"type": "array", "items": map[string]any{"type": "integer"}}},
+			"outline": map[string]any{"type": "array", "description": "a shape [[x, y], …] (image pixels) drawn in magenta over the answer only, to check a mask or a patch before changing anything", "items": map[string]any{"type": "array", "items": map[string]any{"type": "integer"}}},
 		})},
 		{"draw_arrow", "Draws an arrow from (x1,y1) to (x2,y2); the head is at (x2,y2). One undo step.", schema([]string{"x1", "y1", "x2", "y2"}, map[string]any{
 			"x1": pX, "y1": pY, "x2": pX, "y2": pY, "color": pColor, "width": pWidth, "snapshot": pSnap})},
@@ -490,11 +490,11 @@ func baseTools() []toolDef {
 			"color":  pColor, "width": pWidth, "snapshot": pSnap})},
 		{"add_text", "Writes text with its top left corner at (x,y).", schema([]string{"x", "y", "text"}, map[string]any{
 			"x": pX, "y": pY, "text": prop("string", "The text (a new line starts a new row)"), "color": pColor,
-			"size": prop("integer", "Font size in pixels. Default: about 1/40 of the picture's longer side, at least 16"),
+			"size": prop("integer", "Font size in pixels. Default: about 1/40 of the image's longer side, at least 16"),
 			"bold": prop("boolean", "Bold"), "italic": prop("boolean", "Italic"), "font": prop("string", "Font family (default: the app's; see list_fonts)"),
 			"align": map[string]any{"type": "string", "enum": []string{"left", "center", "right"}, "description": "Alignment of the rows inside box_w (default left)"}, "box_w": prop("integer", "Wrap the text into rows at most this wide, in pixels; the box starts at x"),
-			"outline": prop("string", "Color of an outline round the letters (for text on a busy picture)"), "outline_width": prop("integer", "Width of the outline in pixels (default 2)"), "shadow": pShadow, "snapshot": pSnap})},
-		{"new_image", "Makes a new blank picture in the window (it has no file until save_image). Refused when the window has unsaved changes, unless discard is true.", schema([]string{"width", "height"}, map[string]any{
+			"outline": prop("string", "Color of an outline round the letters (for text on a busy image)"), "outline_width": prop("integer", "Width of the outline in pixels (default 2)"), "shadow": pShadow, "snapshot": pSnap})},
+		{"new_image", "Makes a new blank image in the window (it has no file until save_image). Refused when the window has unsaved changes, unless discard is true.", schema([]string{"width", "height"}, map[string]any{
 			"width": prop("integer", "pixels"), "height": prop("integer", "pixels"),
 			"background": prop("string", "A color (#rrggbb, #rrggbbaa or a name) or \"transparent\". Default white"),
 			"discard":    prop("boolean", "Throw away unsaved changes (default false)")})},
@@ -504,14 +504,14 @@ func baseTools() []toolDef {
 			"palette": map[string]any{"type": "object", "description": "For grid: the color of each character, e.g. {\"R\": \"#ff0000\", \".\": \"transparent\"}", "additionalProperties": map[string]any{"type": "string"}},
 			"x":       prop("integer", "For grid: the column of its left edge (default 0)"), "y": prop("integer", "For grid: the row of its top edge (default 0)"),
 			"snapshot": pSnap})},
-		{"resize_canvas", "Makes the canvas of the picture width × height pixels without scaling or changing what is drawn: the picture stays where the anchor says and the new room around it gets the background. With the default anchor bottom-left the new room is above the picture and to its right; top-left adds it below and to the right. A smaller canvas cuts the picture. One undo step.", schema([]string{"width", "height"}, map[string]any{
+		{"resize_canvas", "Makes the canvas of the image width × height pixels without scaling or changing what is drawn: the image stays where the anchor says and the new room around it gets the background. With the default anchor bottom-left the new room is above the image and to its right; top-left adds it below and to the right. A smaller canvas cuts the image. One undo step.", schema([]string{"width", "height"}, map[string]any{
 			"width": prop("integer", "the new width in pixels"), "height": prop("integer", "the new height in pixels"),
-			"anchor":     prop("string", "Where the picture stays: top-left, top, top-right, left, center, right, bottom-left (default), bottom, bottom-right"),
+			"anchor":     prop("string", "Where the image stays: top-left, top, top-right, left, center, right, bottom-left (default), bottom, bottom-right"),
 			"background": prop("string", "Color of the new room: #rrggbb, #rrggbbaa, a name or transparent. Default: transparent, white for a type of file that has no transparency (JPEG, BMP)"),
 			"snapshot":   pSnap})},
-		{"crop", "Keeps only the part of the picture with its top left corner at (x,y), w by h pixels, and cuts the rest away. One undo step.", schema([]string{"x", "y", "w", "h"}, map[string]any{
+		{"crop", "Keeps only the part of the image with its top left corner at (x,y), w by h pixels, and cuts the rest away. One undo step.", schema([]string{"x", "y", "w", "h"}, map[string]any{
 			"x": pX, "y": pY, "w": prop("integer", "width in pixels"), "h": prop("integer", "height in pixels"), "snapshot": pSnap})},
-		{"clone_region", "Copies a part of the picture to another place, like a clone stamp: the part is the box x,y,w,h or the shape polygon (absolute picture pixels, three points or more), and the top left corner of its box lands on (to_x, to_y). It can be flipped or turned, its edge softened (feather, pixels) and made see-through (opacity). Take pixels from a place that looks like what should be where the gap is, and check the result with snapshot. One undo step.", schema([]string{"to_x", "to_y"}, map[string]any{
+		{"clone_region", "Copies a part of the image to another place, like a clone stamp: the part is the box x,y,w,h or the shape polygon (absolute image pixels, three points or more), and the top left corner of its box lands on (to_x, to_y). It can be flipped or turned, its edge softened (feather, pixels) and made see-through (opacity). Take pixels from a place that looks like what should be where the gap is, and check the result with snapshot. One undo step.", schema([]string{"to_x", "to_y"}, map[string]any{
 			"x": pX, "y": pY, "w": prop("integer", "width of the box"), "h": prop("integer", "height of the box"), "polygon": pPoly, "mask": pMask,
 			"to_x": prop("integer", "x where the top left corner of the part lands"), "to_y": prop("integer", "y where the top left corner of the part lands"),
 			"flip_h": prop("boolean", "mirror left to right"), "flip_v": prop("boolean", "mirror top to bottom"), "rotate": prop("integer", "0, 90, 180 or 270 degrees clockwise"),
@@ -522,20 +522,20 @@ func baseTools() []toolDef {
 			"x": pX, "y": pY, "w": prop("integer", "width of the box"), "h": prop("integer", "height of the box"), "polygon": pPoly, "mask": pMask,
 			"method": map[string]any{"type": "string", "enum": []string{"smooth", "color_match", "poisson"}, "description": "smooth, color_match or poisson"},
 			"width":  prop("integer", "pixels of the edge worked on (default 8)"), "strength": prop("number", "0 to 1 (default 1)"), "snapshot": pSnap})},
-		{"selection_mask", "Shows you what the user has selected in the window: the polygon of the polygon select tool, or else the rectangle of the select tool. Call it first when the user says \"this\", \"the selected part\", \"what I selected\", \"the selection\" or \"this region\". It returns the corners of the polygon (or the rectangle), a mask id for the other tools, and two pictures: the whole picture with the outline, and the selected part enlarged and tinted with its surroundings, so you can see what is in it (a label, a pattern, a stain…). Says so when nothing is selected. Does not change the picture.", schema(nil, map[string]any{"snapshot": pSnap})},
-		{"select_polygon", "Selects a polygon in the window, so that the user sees it (marching dashes) and can copy it or delete it; polygon is [[x, y], …] of three points or more, as many as the outline needs. An empty polygon lets the selection go. Does not change the picture.", schema(nil, map[string]any{"polygon": pPoly})},
-		{"discard_changes", "Discards all changes to the picture: it goes back to the file as it is on the disk (or, for a picture that has no file, as it was made or pasted). One undo step, so undo brings the changes back. Use it to start again.", schema(nil, map[string]any{"snapshot": pSnap})},
-		{"select_by_color", "Makes a mask of the pixels that have the color of the pixel (x,y), give or take the tolerance: the ones connected to it (default) or all in the picture. Holes inside are filled (fill_holes, default true); grow or shrink the edge by pixels. Returns the mask id, which clone_region, blend_edges, fill_region and snapshot take as mask. Use it to outline an object that has a distinct color (the berries, the sky) exactly, instead of guessing a polygon; snapshot with the mask id tints it so that you can check it. Does not change the picture.", schema([]string{"x", "y"}, map[string]any{
+		{"selection_mask", "Shows you what the user has selected in the window: the polygon of the polygon select tool, or else the rectangle of the select tool. Call it first when the user says \"this\", \"the selected part\", \"what I selected\", \"the selection\" or \"this region\". It returns the corners of the polygon (or the rectangle), a mask id for the other tools, and two images: the whole image with the outline, and the selected part enlarged and tinted with its surroundings, so you can see what is in it (a label, a pattern, a stain…). Says so when nothing is selected. Does not change the image.", schema(nil, map[string]any{"snapshot": pSnap})},
+		{"select_polygon", "Selects a polygon in the window, so that the user sees it (marching dashes) and can copy it or delete it; polygon is [[x, y], …] of three points or more, as many as the outline needs. An empty polygon lets the selection go. Does not change the image.", schema(nil, map[string]any{"polygon": pPoly})},
+		{"discard_changes", "Discards all changes to the image: it goes back to the file as it is on the disk (or, for an image that has no file, as it was made or pasted). One undo step, so undo brings the changes back. Use it to start again.", schema(nil, map[string]any{"snapshot": pSnap})},
+		{"select_by_color", "Makes a mask of the pixels that have the color of the pixel (x,y), give or take the tolerance: the ones connected to it (default) or all in the image. Holes inside are filled (fill_holes, default true); grow or shrink the edge by pixels. Returns the mask id, which clone_region, blend_edges, fill_region and snapshot take as mask. Use it to outline an object that has a distinct color (the berries, the sky) exactly, instead of guessing a polygon; snapshot with the mask id tints it so that you can check it. Does not change the image.", schema([]string{"x", "y"}, map[string]any{
 			"x": pX, "y": pY, "tolerance": prop("integer", "0 to 100: how different a color may be (default 15)"), "contiguous": prop("boolean", "only the area connected to the pixel (default true)"),
 			"fill_holes": prop("boolean", "include the holes inside the area (default true)"), "grow": prop("integer", "make the area this many pixels bigger"), "shrink": prop("integer", "make the area this many pixels smaller"), "snapshot": pSnap})},
-		{"create_mask", "Makes a mask of a polygon (three points or more, as many as the outline needs: a complicated shape such as a hand, a tree or a letter can have a hundred points) or the box x,y,w,h, to use as mask, source_mask or avoid_mask in the other tools. polygons gives several shapes at once, joined into one mask (the pieces need not touch; a hole is made by subtracting another mask with edit_mask). Returns its id. Does not change the picture.", schema(nil, map[string]any{
+		{"create_mask", "Makes a mask of a polygon (three points or more, as many as the outline needs: a complicated shape such as a hand, a tree or a letter can have a hundred points) or the box x,y,w,h, to use as mask, source_mask or avoid_mask in the other tools. polygons gives several shapes at once, joined into one mask (the pieces need not touch; a hole is made by subtracting another mask with edit_mask). Returns its id. Does not change the image.", schema(nil, map[string]any{
 			"x": pX, "y": pY, "w": prop("integer", "width of the box"), "h": prop("integer", "height of the box"), "polygon": pPoly,
 			"polygons": map[string]any{"type": "array", "description": "several polygons, each [[x, y], …], joined into one mask", "items": pPoly},
 			"grow":     prop("integer", "make the area this many pixels bigger"), "shrink": prop("integer", "make the area this many pixels smaller"), "snapshot": pSnap})},
-		{"edit_mask", "Changes a mask: add_mask, subtract_mask or intersect_mask (ids of other masks), invert, fill_holes, grow or shrink by pixels. The id stays the same. Does not change the picture.", schema([]string{"mask"}, map[string]any{
+		{"edit_mask", "Changes a mask: add_mask, subtract_mask or intersect_mask (ids of other masks), invert, fill_holes, grow or shrink by pixels. The id stays the same. Does not change the image.", schema([]string{"mask"}, map[string]any{
 			"mask": prop("string", "the id of the mask"), "add_mask": prop("string", "id of a mask to add"), "subtract_mask": prop("string", "id of a mask to take away"), "intersect_mask": prop("string", "id of a mask to keep only the common part with"),
 			"invert": prop("boolean", "swap inside and outside"), "fill_holes": prop("boolean", "include the holes inside"), "grow": prop("integer", "bigger by pixels"), "shrink": prop("integer", "smaller by pixels"), "snapshot": pSnap})},
-		{"seam_score", "Judges how much the edge of an area shows (use it after clone_region or blend_edges, so that you do not have to guess from a small image): the area is a mask, a polygon or the box x,y,w,h. It returns the seam ratio (about 1 cannot be seen, over 2 shows, over 3 is obvious), the step in brightness against the surroundings, and the worst sides (compass directions). Does not change the picture.", schema(nil, map[string]any{
+		{"seam_score", "Judges how much the edge of an area shows (use it after clone_region or blend_edges, so that you do not have to guess from a small image): the area is a mask, a polygon or the box x,y,w,h. It returns the seam ratio (about 1 cannot be seen, over 2 shows, over 3 is obvious), the step in brightness against the surroundings, and the worst sides (compass directions). Does not change the image.", schema(nil, map[string]any{
 			"x": pX, "y": pY, "w": prop("integer", "width of the box"), "h": prop("integer", "height of the box"), "polygon": pPoly, "mask": pMask, "width": prop("integer", "pixels each side of the edge that are looked at (default 6)")})},
 		{"fill_region", "Fills an area from the pixels around it (content-aware fill): a mask, a polygon or the box x,y,w,h. method patch (default) copies small patches of the surroundings from the edge inward so that textures go on; smooth, nearest, average and solid fill without patches (see method). It does not invent new objects. Make the area hug what is to be removed (a mask from select_by_color or a polygon), not a rectangle around it. One undo step.", schema(nil, map[string]any{
 			"x": pX, "y": pY, "w": prop("integer", "width of the box"), "h": prop("integer", "height of the box"), "polygon": pPoly, "mask": pMask,
@@ -548,14 +548,14 @@ func baseTools() []toolDef {
 			"x": pX, "y": pY, "color": pColor, "tolerance": prop("integer", "0 to 100: how different a color may be and still be filled (default 10)"), "snapshot": pSnap})},
 		{"select_region", "Selects the rectangle with its top left corner at (x,y), w by h pixels. The selection is also put on the clipboard (copy it into another window with paste there).", schema([]string{"x", "y", "w", "h"}, map[string]any{
 			"x": pX, "y": pY, "w": prop("integer", "width in pixels"), "h": prop("integer", "height in pixels")})},
-		{"copy", "Copies the selection (or the whole picture when nothing is selected) to the clipboard.", schema(nil, map[string]any{})},
-		{"paste", "Pastes the picture on the clipboard into the window: with edit mode on (any drawing tool chosen) as a part that is placed in the picture, otherwise as the window's new picture (undo brings the old one back). Together with select_region and copy in another window this moves a part of one picture into another.", schema(nil, map[string]any{"snapshot": pSnap})},
+		{"copy", "Copies the selection (or the whole image when nothing is selected) to the clipboard.", schema(nil, map[string]any{})},
+		{"paste", "Pastes the image on the clipboard into the window: with edit mode on (any drawing tool chosen) as a part that is placed in the image, otherwise as the window's new image (undo brings the old one back). Together with select_region and copy in another window this moves a part of one image into another.", schema(nil, map[string]any{"snapshot": pSnap})},
 		{"undo", "Undoes the last step in the window.", schema(nil, map[string]any{"snapshot": pSnap})},
 		{"redo", "Redoes the step that was undone.", schema(nil, map[string]any{"snapshot": pSnap})},
 		{"get_pixel", "Returns the color of the pixel at (x,y).", schema([]string{"x", "y"}, map[string]any{"x": pX, "y": pY})},
-		{"open_image", "Opens a picture file in the window. Refused when the window has unsaved changes, unless discard is true.", schema([]string{"path"}, map[string]any{
-			"path": prop("string", "Full path of the picture"), "discard": prop("boolean", "Throw away unsaved changes (default false)")})},
-		{"save_image", "Saves the picture of the window to a file; the type is the one the name ends with (png, jpg, gif, bmp, tif). The window then shows that file. Refuses to replace a file that exists unless overwrite is true.", schema([]string{"path"}, map[string]any{
+		{"open_image", "Opens an image file in the window. Refused when the window has unsaved changes, unless discard is true.", schema([]string{"path"}, map[string]any{
+			"path": prop("string", "Full path of the image"), "discard": prop("boolean", "Throw away unsaved changes (default false)")})},
+		{"save_image", "Saves the image of the window to a file; the type is the one the name ends with (png, jpg, gif, bmp, tif). The window then shows that file. Refuses to replace a file that exists unless overwrite is true.", schema([]string{"path"}, map[string]any{
 			"path": prop("string", "Full path to save to"), "overwrite": prop("boolean", "Replace the file if it exists (default false)"),
 			"quality": prop("integer", "JPEG quality 1 to 100 (default 95; a JPEG that was not changed is copied as it is)")})},
 	}
@@ -639,7 +639,7 @@ func (h *chatHub) state() (map[string]any, error) {
 func pictureSize(st map[string]any) (int, int, error) {
 	sz, ok := st["size"].([]any)
 	if !ok || len(sz) != 2 {
-		return 0, 0, fmt.Errorf("this window has no picture: open one first (open_image)")
+		return 0, 0, fmt.Errorf("this window has no image: open one first (open_image)")
 	}
 	pw, _ := sz[0].(float64)
 	ph, _ := sz[1].(float64)
@@ -837,7 +837,7 @@ func (h *chatHub) callTool(name string, args map[string]any) ([]any, error) {
 				shown = shown[:120]
 			}
 			j, _ := json.Marshal(shown)
-			text += fmt.Sprintf(" The polygon's corners in picture pixels (%d of them%s): %s.", len(poly), map[bool]string{true: ", the first 120 shown", false: ""}[len(poly) > 120], j)
+			text += fmt.Sprintf(" The polygon's corners in image pixels (%d of them%s): %s.", len(poly), map[bool]string{true: ", the first 120 shown", false: ""}[len(poly) > 120], j)
 		} else if x, y, w, hh := cmd["x"], cmd["y"], cmd["w"], cmd["h"]; x != nil {
 			fx, fy, fw, fh := toF(x), toF(y), toF(w), toF(hh)
 			outline = []any{[]any{fx, fy}, []any{fx + fw - 1, fy}, []any{fx + fw - 1, fy + fh - 1}, []any{fx, fy + fh - 1}}
@@ -884,7 +884,7 @@ func (h *chatHub) callTool(name string, args map[string]any) ([]any, error) {
 		if _, err := h.window(map[string]any{"cmd": "menu", "name": "discard"}); err != nil {
 			return nil, fmt.Errorf("discard_changes: %w", err)
 		}
-		content = []any{textContent("The changes are discarded: the picture is as it was when it came into the window (undo brings them back)")}
+		content = []any{textContent("The changes are discarded: the image is as it was when it came into the window (undo brings them back)")}
 	case "select_by_color", "create_mask", "edit_mask":
 		cmd := map[string]any{"cmd": "mask", "op": map[string]string{"select_by_color": "color", "create_mask": "create", "edit_mask": "edit"}[name]}
 		for _, k := range []string{"x", "y", "w", "h", "tolerance", "contiguous", "fill_holes", "grow", "shrink", "mask", "add_mask", "subtract_mask", "intersect_mask", "invert", "polys"} {
@@ -914,7 +914,7 @@ func (h *chatHub) callTool(name string, args map[string]any) ([]any, error) {
 		}
 		snapMask, _ = res["mask"].(string)
 		box, _ := res["box"].([]any)
-		content = []any{textContent(fmt.Sprintf("Mask %v: %v pixels, box %v (x, y, w, h) of a picture of %v. Pass it as mask to clone_region, blend_edges, fill_region or snapshot (snapshot shows it tinted).", res["mask"], res["pixels"], box, res["picture"]))}
+		content = []any{textContent(fmt.Sprintf("Mask %v: %v pixels, box %v (x, y, w, h) of an image of %v. Pass it as mask to clone_region, blend_edges, fill_region or snapshot (snapshot shows it tinted).", res["mask"], res["pixels"], box, res["picture"]))}
 	case "seam_score":
 		cmd := map[string]any{"cmd": "seam"}
 		for _, k := range []string{"x", "y", "w", "h", "mask", "width"} {
@@ -955,7 +955,7 @@ func (h *chatHub) callTool(name string, args map[string]any) ([]any, error) {
 		if anchor == "" {
 			anchor = "bottom-left"
 		}
-		content = []any{textContent(fmt.Sprintf("The canvas is %d × %d pixels now (the picture stays at %s)", pw, ph, anchor))}
+		content = []any{textContent(fmt.Sprintf("The canvas is %d × %d pixels now (the image stays at %s)", pw, ph, anchor))}
 	case "crop":
 		v, err := ints(args, "x", "y", "w", "h")
 		if err != nil {
@@ -966,7 +966,7 @@ func (h *chatHub) callTool(name string, args map[string]any) ([]any, error) {
 			return nil, err
 		}
 		pw, ph, _ := pictureSize(res)
-		content = []any{textContent(fmt.Sprintf("Cropped to %d,%d %d × %d: the picture is %d × %d pixels now", v[0], v[1], v[2], v[3], pw, ph))}
+		content = []any{textContent(fmt.Sprintf("Cropped to %d,%d %d × %d: the image is %d × %d pixels now", v[0], v[1], v[2], v[3], pw, ph))}
 	case "get_pixel":
 		xy, err := ints(args, "x", "y")
 		if err != nil {
@@ -1081,19 +1081,19 @@ func (h *chatHub) snapshotTool(args map[string]any) ([]any, error) {
 	}
 	data, _ := res["png"].(string)
 	scale, _ := res["scale"].(float64)
-	note := "Picture size and region unknown"
+	note := "Image size and region unknown"
 	if pic, _ := res["picture"].([]any); len(pic) == 2 {
-		note = fmt.Sprintf("Picture is %v × %v pixels. This image shows the region [x, y, w, h] = %v", pic[0], pic[1], res["region"])
+		note = fmt.Sprintf("Image is %v × %v pixels. This image shows the region [x, y, w, h] = %v", pic[0], pic[1], res["region"])
 	}
 	if res["compare"] == true {
-		note += ". LEFT is the original file, RIGHT is the picture now (a magenta bar between them); both show the same region"
+		note += ". LEFT is the original file, RIGHT is the image now (a magenta bar between them); both show the same region"
 	}
 	if z, _ := res["zoom"].(float64); z > 1 {
-		note += fmt.Sprintf(", enlarged %d× (every picture pixel is %d × %d pixels here: picture x = region x + image x / %d)", int(z), int(z), int(z), int(z))
+		note += fmt.Sprintf(", enlarged %d× (every image pixel is %d × %d pixels here: image x = region x + image x / %d)", int(z), int(z), int(z), int(z))
 	} else if scale < 1 {
-		note += fmt.Sprintf(", scaled down by %.3f (multiply positions you read in the image by %.3f to get picture pixels)", scale, 1/scale)
+		note += fmt.Sprintf(", scaled down by %.3f (multiply positions you read in the image by %.3f to get image pixels)", scale, 1/scale)
 	} else {
-		note += ", at full size (positions in the image are picture pixels plus the region's x and y)"
+		note += ", at full size (positions in the image are image pixels plus the region's x and y)"
 	}
 	out := []any{map[string]any{"type": "image", "data": data, "mimeType": "image/png"}, textContent(note)}
 	if grid, ok := res["grid"].(map[string]any); ok {
@@ -1142,7 +1142,7 @@ func (h *chatHub) pixelList(args map[string]any) ([][3]any, string, error) {
 	var list [][3]any
 	add := func(x, y int, c string) error {
 		if x < 0 || y < 0 || x >= pw || y >= ph {
-			return fmt.Errorf("the pixel %d,%d is outside the picture (%d × %d pixels)", x, y, pw, ph)
+			return fmt.Errorf("the pixel %d,%d is outside the image (%d × %d pixels)", x, y, pw, ph)
 		}
 		list = append(list, [3]any{x, y, c})
 		return nil
@@ -1203,7 +1203,7 @@ func (h *chatHub) pixelList(args map[string]any) ([][3]any, string, error) {
 	if len(list) > 1<<20 {
 		return nil, "", fmt.Errorf("%d pixels at once is too many (up to %d)", len(list), 1<<20)
 	}
-	return list, fmt.Sprintf("Set %d pixels (picture %d × %d)", len(list), pw, ph), nil
+	return list, fmt.Sprintf("Set %d pixels (image %d × %d)", len(list), pw, ph), nil
 }
 
 func (h *chatHub) newImage(args map[string]any) ([]any, error) {
@@ -1221,7 +1221,7 @@ func (h *chatHub) newImage(args map[string]any) ([]any, error) {
 	if _, err := h.window(map[string]any{"cmd": "new", "w": v[0], "h": v[1], "color": bg}); err != nil {
 		return nil, err
 	}
-	return []any{textContent(fmt.Sprintf("New picture %d × %d, background %s. Draw with set_pixels or the drawing tools; look with get_image.", v[0], v[1], bg))}, nil
+	return []any{textContent(fmt.Sprintf("New image %d × %d, background %s. Draw with set_pixels or the drawing tools; look with get_image.", v[0], v[1], bg))}, nil
 }
 
 // drawCommands are the commands for a drawing tool: each one puts its shape, fill or text into the picture at once (no pointer, no tool to choose).
@@ -1250,7 +1250,7 @@ func (h *chatHub) drawCommands(name string, args map[string]any) ([]map[string]a
 	}
 	inside := func(x, y int) error {
 		if x < 0 || y < 0 || x >= pw || y >= ph {
-			return fmt.Errorf("the position %d,%d is outside the picture (%d × %d pixels)", x, y, pw, ph)
+			return fmt.Errorf("the position %d,%d is outside the image (%d × %d pixels)", x, y, pw, ph)
 		}
 		return nil
 	}

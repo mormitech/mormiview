@@ -54,7 +54,7 @@ func (s *maskStore) get(id string, w, h int) (*maskData, error) {
 		return nil, fmt.Errorf("there is no mask %q (masks come from select_by_color and create_mask; the oldest are dropped after %d)", id, maxMasks)
 	}
 	if md.w != w || md.h != h {
-		return nil, fmt.Errorf("the mask %s was made for a picture of %d × %d, and the picture is %d × %d now: make it again", id, md.w, md.h, w, h)
+		return nil, fmt.Errorf("the mask %s was made for an image of %d × %d, and the image is %d × %d now: make it again", id, md.w, md.h, w, h)
 	}
 	return md, nil
 }
@@ -170,7 +170,7 @@ func (md *maskData) fillHoles() {
 func selectByColor(img *image.NRGBA, x, y, tolerance int, contiguous bool) (*maskData, error) {
 	b := img.Bounds()
 	if !image.Pt(x, y).In(b) {
-		return nil, fmt.Errorf("the pixel %d,%d is outside the picture (%d × %d)", x, y, b.Dx(), b.Dy())
+		return nil, fmt.Errorf("the pixel %d,%d is outside the image (%d × %d)", x, y, b.Dx(), b.Dy())
 	}
 	w, h := b.Dx(), b.Dy()
 	seed := img.NRGBAAt(x, y)
@@ -223,7 +223,7 @@ func (a *App) maskCommand(m map[string]any) (map[string]any, error) {
 		return nil, err
 	}
 	if img == nil {
-		return nil, fmt.Errorf("there is no picture in this window")
+		return nil, fmt.Errorf("there is no image in this window")
 	}
 	b := img.Bounds()
 	w, h := b.Dx(), b.Dy()
@@ -392,7 +392,7 @@ func seamReport(img *image.NRGBA, sh *shape, width int) string {
 		}
 	}
 	if nTotal == 0 {
-		return "the shape has no edge inside the picture"
+		return "the shape has no edge inside the image"
 	}
 	// what the picture does by itself next to the edge: the changes between neighbours within `width` of it on both sides
 	var near, nNear float64
@@ -466,7 +466,7 @@ func (a *App) seamCommand(m map[string]any) (map[string]any, error) {
 		return nil, err
 	}
 	if img == nil {
-		return nil, fmt.Errorf("there is no picture in this window")
+		return nil, fmt.Errorf("there is no image in this window")
 	}
 	raw, _ := json.Marshal(m)
 	var sp retouchSpec

@@ -58,7 +58,7 @@ func (a *App) setFloat(rot, sx, sy, sw, sh, dx, dy, dw, dh int, smooth bool) err
 			return err
 		}
 		if !src.In(base.Bounds()) {
-			return fmt.Errorf("the selection is not inside the picture")
+			return fmt.Errorf("the selection is not inside the image")
 		}
 		lifted := image.NewNRGBA(image.Rect(0, 0, src.Dx(), src.Dy()))
 		draw.Draw(lifted, lifted.Bounds(), base, src.Min, draw.Src)
@@ -250,7 +250,7 @@ func (a *App) PasteNew() error {
 func (a *App) pasteClipboard(img image.Image, rot, x, y int) (PastedLayer, error) {
 	sb := img.Bounds()
 	if sb.Dx() < 1 || sb.Dy() < 1 || sb.Dx()*sb.Dy() > maxPixels {
-		return PastedLayer{}, fmt.Errorf("the picture on the clipboard is %d × %d: too small or too big", sb.Dx(), sb.Dy())
+		return PastedLayer{}, fmt.Errorf("the image on the clipboard is %d × %d: too small or too big", sb.Dx(), sb.Dy())
 	}
 	if a.current().URL == "" {
 		return PastedLayer{}, a.setClip(img)
@@ -350,7 +350,7 @@ func (a *App) MovePasted(dx, dy, dw, dh int, smooth bool) error {
 	f, state := a.fl, a.stateID
 	if f == nil || !f.pasted || f.state != state || dw < 1 || dh < 1 {
 		a.mu.Unlock()
-		return fmt.Errorf("there is no pasted picture to move")
+		return fmt.Errorf("there is no pasted image to move")
 	}
 	f.dest, f.smooth = image.Rect(dx, dy, dx+dw, dy+dh), smooth
 	a.mu.Unlock()

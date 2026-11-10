@@ -24,7 +24,7 @@ async function aboutHTML() {
   return `<img class="logo" src="${logo}" alt="" width="132">
     <h1><span class="wordmark"><span class="wm-mormi">mormi</span><span class="wm-product">View</span></span></h1>
     <p class="muted">Version ${esc(await Version())}</p>
-    <p>${WEB ? 'A picture viewer and editor that runs in your browser. Your pictures stay in this browser; only the AI chat, when you use it, sends them to the provider you chose (the Claude API or OpenRouter).' : 'A picture viewer for macOS, Windows and Linux. Open a picture from your file manager (Open with…) or with File → Open.'}</p>
+    <p>${WEB ? 'An image viewer and editor that runs in your browser. Your images stay in this browser; only the AI chat, when you use it, sends them to the provider you chose (the Claude API or OpenRouter).' : 'An image viewer for macOS, Windows and Linux. Open an image from your file manager (Open with…) or with File → Open.'}</p>
     <p class="muted">Free and open source, MIT license. No accounts, no ads, no telemetry.</p>
     <p class="links"><a href="${REPO}">Website and source code</a><a href="${REPO}/issues">Report a problem</a><a href="${REPO}/blob/main/LICENSE">License</a><a class="coffee" href="https://mormitech.com/support-us/">${COFFEE}Buy me a coffee</a></p>`;
 }
@@ -1627,7 +1627,7 @@ async function cutPng(r) {
   let b64 = '';
   if (pixelState === 'go') b64 = await SelectionPNG(n.x, n.y, n.w, n.h, nw, nh);
   if (!b64) { // a type Go cannot decode: cut it out of what the web view drew
-    if (!pixelCanvas) throw new Error('this picture cannot be copied');
+    if (!pixelCanvas) throw new Error('this image cannot be copied');
     const c = document.createElement('canvas'); c.width = n.w; c.height = n.h;
     c.getContext('2d').putImageData(pixelCanvas.getImageData(n.x, n.y, n.w, n.h), 0, 0);
     b64 = await blobToBase64(await new Promise((res) => c.toBlob(res, 'image/png')));
@@ -1935,7 +1935,7 @@ let actor = 'user';
 const checkpoints = new Map(); // name → the step of the history (the object itself, so that it is found again when the list changes)
 function autoLabel(prev, s) {
   if (!prev) return 'start';
-  if (s.state !== prev.state) return 'picture changed';
+  if (s.state !== prev.state) return 'image changed';
   if (s.rot !== prev.rot) return 'turned';
   if (s.mode !== prev.mode) return `view mode: ${s.mode}`;
   if (s.pixelated !== prev.pixelated) return 'pixelated view toggled';
@@ -2003,7 +2003,7 @@ function undoRedo(delta) {
   const now = performance.now();
   if (now - lastUndo < 120) return;
   lastUndo = now;
-  if (delta < 0 && view.state && history.list[history.at + delta]?.state === 0) { problem('Nothing more to undo (closing the picture is what Reopen last closed is for)', false, 2200); return; } // undo does not go back to the home screen: a picture that was opened, scanned or pasted there stays
+  if (delta < 0 && view.state && history.list[history.at + delta]?.state === 0) { problem('Nothing more to undo (closing the image is what Reopen last closed is for)', false, 2200); return; } // undo does not go back to the home screen: a picture that was opened, scanned or pasted there stays
   travel(history.at + delta);
 }
 const undo = () => undoRedo(-1), redo = () => undoRedo(1);
@@ -2047,7 +2047,7 @@ function startViewer() {
     if (cancelDraw()) ev.preventDefault();
   });
   const cmd = navigator.platform.startsWith('Mac') ? '⌘' : 'Ctrl+';
-  $('hint').textContent = WEB ? 'Open a picture, paste one from the clipboard, or start a blank one. You can also drop pictures or a whole folder on this window; they stay in this browser.' : 'Open a picture, paste one from the clipboard, or start a blank one. You can also open pictures with mormiView from your file manager.';
+  $('hint').textContent = WEB ? 'Open an image, paste one from the clipboard, or start a blank one. You can also drop images or a whole folder on this window; they stay in this browser.' : 'Open an image, paste one from the clipboard, or start a blank one. You can also open images with mormiView from your file manager.';
   $('k-clip').textContent = `${cmd}V`; $('k-reopen').textContent = `${cmd}Z`;
   $('reopen-pic').onclick = () => undo();
   $('open').onclick = choose;
@@ -2068,7 +2068,7 @@ function startViewer() {
   window.addEventListener('focus', () => { if (!$('empty').hidden) offerClipboard(); });
   offerClipboard();
   EventsOn('history-reset', () => { history.list.length = 0; history.at = -1; }); // a deleted picture cannot be brought back by undo
-  EventsOn('image', (info) => { const edit = editAfterImage; editAfterImage = false; showImage(info).then(() => { if (edit) setEdit(true); }); commit(`picture shown: ${info.name}`); });
+  EventsOn('image', (info) => { const edit = editAfterImage; editAfterImage = false; showImage(info).then(() => { if (edit) setEdit(true); }); commit(`image shown: ${info.name}`); });
   const typing = () => { const el = document.activeElement; return !!el && (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT' || el.isContentEditable); }; // the Edit menu then works on the text (of the picture, or of the chat box)
   EventsOn('menu-undo', () => typing() ? document.execCommand('undo') : undo());
   EventsOn('menu-redo', () => typing() ? document.execCommand('redo') : redo());
@@ -2338,7 +2338,7 @@ async function ctlRun(m) {
     case 'transform': { // resize, rotate, flip or place (see transform.go)
       await commitText(); if (view.fl) await flushFloat({clear: true});
       const spec = {...m}; delete spec.cmd;
-      const info = await Transform(view.rot, JSON.stringify(spec)); await showImage(info, {rot: 0}); commit(`${m.op}${m.op === 'place' ? 'd picture' : ''}`); return ctlState();
+      const info = await Transform(view.rot, JSON.stringify(spec)); await showImage(info, {rot: 0}); commit(`${m.op}${m.op === 'place' ? 'd image' : ''}`); return ctlState();
     }
     case 'gif': { // the frames of an animation (1 based numbers are made 0 based by the tools): {op: start|add|duplicate|delete|move|delay, …}
       await commitText(); if (view.fl) await flushFloat({clear: true});
@@ -2425,7 +2425,7 @@ async function ctlRun(m) {
     }
     case 'text': { // a text put into the picture with its top left corner at the pixel {x, y}: {value, color}, the font and size are the options
       await commitText(); if (view.fl) await flushFloat({clear: true});
-      if (m.x < 0 || m.y < 0 || m.x >= dispW() || m.y >= dispH()) throw new Error('the text could not be placed: the pixel is outside the picture');
+      if (m.x < 0 || m.y < 0 || m.x >= dispW() || m.y >= dispH()) throw new Error('the text could not be placed: the pixel is outside the image');
       txt = {x: m.x, y: m.y, color: m.color || paint.fg, opts: {align: m.align, boxW: m.box_w, outline: m.outline, outlineW: m.outline_width, shadow: m.shadow}}; $('textbox').value = m.value;
       await commitText(); return ctlState();
     }

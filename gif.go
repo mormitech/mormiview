@@ -340,7 +340,7 @@ func (a *App) gifLive() (*gifSession, error) {
 		return nil, err
 	}
 	if g == nil {
-		return nil, fmt.Errorf("this picture is not an animation: start one first (animation_start)")
+		return nil, fmt.Errorf("this image is not an animation: start one first (animation_start)")
 	}
 	return g, nil
 }
@@ -372,11 +372,11 @@ func (a *App) GifStart(rot int) (ImageInfo, error) {
 		return ImageInfo{}, err
 	}
 	if img == nil || a.current().URL == "" {
-		return ImageInfo{}, fmt.Errorf("there is no picture to make an animation of")
+		return ImageInfo{}, fmt.Errorf("there is no image to make an animation of")
 	}
 	b := img.Bounds()
 	if b.Dx() > 2048 || b.Dy() > 2048 {
-		return ImageInfo{}, fmt.Errorf("the picture is %d × %d: an animation is made of pictures up to 2048 on a side", b.Dx(), b.Dy())
+		return ImageInfo{}, fmt.Errorf("the image is %d × %d: an animation is made of images up to 2048 on a side", b.Dx(), b.Dy())
 	}
 	a.mu.Lock()
 	a.gifs = &gifSession{id: gifSessions.Add(1), path: a.image, w: b.Dx(), h: b.Dy(), orig: []*image.NRGBA{img}, frames: []*image.NRGBA{img}, delays: []int{100}, origDelays: []int{100}, started: true}
@@ -635,7 +635,7 @@ func (a *App) GifTarget(n int) error {
 		if n == 0 {
 			return nil
 		}
-		return fmt.Errorf("this picture is not an animation")
+		return fmt.Errorf("this image is not an animation")
 	}
 	if n == 0 { // back to the user's frame
 		if g.ovr {

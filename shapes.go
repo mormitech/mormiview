@@ -173,7 +173,7 @@ func (a *App) DrawShape(rot int, spec string) (ImageInfo, error) {
 		return ImageInfo{}, err
 	}
 	if base == nil {
-		return ImageInfo{}, fmt.Errorf("there is no picture in this window")
+		return ImageInfo{}, fmt.Errorf("there is no image in this window")
 	}
 	bb := base.Bounds()
 	w := max(1, min(s.Width, 200))

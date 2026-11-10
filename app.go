@@ -315,12 +315,12 @@ func imageFilter() wruntime.FileFilter {
 		exts = append(exts, "*"+e)
 	}
 	sort.Strings(exts)
-	return wruntime.FileFilter{DisplayName: "Pictures", Pattern: strings.Join(exts, ";")}
+	return wruntime.FileFilter{DisplayName: "Images", Pattern: strings.Join(exts, ";")}
 }
 
 // ChooseImage shows the Open dialog and opens the picture in this window. Cancelling is not an error.
 func (a *App) ChooseImage() error {
-	if !a.discardOK("open another picture") { // the question about unsaved changes comes before the dialog
+	if !a.discardOK("open another image") { // the question about unsaved changes comes before the dialog
 		return nil
 	}
 	dir := a.current().Dir

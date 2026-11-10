@@ -20,7 +20,7 @@ import (
 func (a *App) imageInfoCommand(m map[string]any) (map[string]any, error) {
 	cur := a.current()
 	if cur.Name == "" && cur.URL == "" {
-		return nil, fmt.Errorf("this window has no picture")
+		return nil, fmt.Errorf("this window has no image")
 	}
 	a.mu.Lock()
 	turn := a.turn

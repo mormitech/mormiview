@@ -208,7 +208,7 @@ func TestHubDrawArrow(t *testing.T) {
 	}
 	// outside the picture: refused before anything is drawn
 	n := len(fws[0].sent())
-	if r, bad := call(t, h, "draw_arrow", `{"x1":100,"y1":100,"x2":4000,"y2":100}`); !bad || !strings.Contains(firstText(r), "outside the picture") {
+	if r, bad := call(t, h, "draw_arrow", `{"x1":100,"y1":100,"x2":4000,"y2":100}`); !bad || !strings.Contains(firstText(r), "outside the image") {
 		t.Errorf("an arrow out of the picture: %v", r)
 	}
 	for _, c := range fws[0].sent()[n:] {

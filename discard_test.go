@@ -49,7 +49,7 @@ func TestDiscardOnlyAsksForModifiedPictures(t *testing.T) {
 	modify(a)
 	a.confirmDiscard = func(name, action string) discardChoice { gotName, gotAction = name, action; return choiceDiscard }
 	a.Step(-1)
-	if gotName != "a.png" || gotAction != "go to the previous picture" {
+	if gotName != "a.png" || gotAction != "go to the previous image" {
 		t.Errorf("the alert was asked %q, %q", gotName, gotAction)
 	}
 }

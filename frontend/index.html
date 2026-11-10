@@ -13,13 +13,13 @@
         <h1><span class="wordmark"><span class="wm-mormi">mormi</span><span class="wm-product">View</span></span></h1>
         <p class="muted" id="hint"></p>
         <div id="empty-actions">
-            <button id="open" class="card"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6H9l2 2.5h8.5A1.5 1.5 0 0 1 21 10v8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18z"/></svg><b>Open file…</b><small>Browse for a picture</small><kbd>O</kbd></button>
-            <button id="open-clip" class="card" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4.5" width="14" height="16.5" rx="2"/><rect x="8.5" y="2.5" width="7" height="4" rx="1.2"/><path d="M8.5 11h7M8.5 14.5h7M8.5 18h4"/></svg><b>Open from clipboard</b><small>The picture you copied</small><kbd id="k-clip">⌘V</kbd></button>
+            <button id="open" class="card"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6H9l2 2.5h8.5A1.5 1.5 0 0 1 21 10v8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18z"/></svg><b>Open file…</b><small>Browse for an image</small><kbd>O</kbd></button>
+            <button id="open-clip" class="card" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4.5" width="14" height="16.5" rx="2"/><rect x="8.5" y="2.5" width="7" height="4" rx="1.2"/><path d="M8.5 11h7M8.5 14.5h7M8.5 18h4"/></svg><b>Open from clipboard</b><small>The image you copied</small><kbd id="k-clip">⌘V</kbd></button>
             <button id="new-pic" class="card" title="Shift-click: choose the size and the background"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2"/><path d="M12 9.5v5M9.5 12h5"/></svg><b>Create image</b><small><span class="s-def">A blank 1280 × 720<br>Hold Shift for custom</span><span class="s-cus">Click to customize</span></small><kbd>N</kbd></button>
-            <button id="reopen-pic" class="card" hidden title="Bring back the picture you closed last, with all its changes and its undo history"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 8.5a7.5 7.5 0 1 1-1 5"/><path d="M4.5 3.8v5h5"/><path d="M12 8.5V12l2.5 1.5"/></svg><b>Reopen last closed</b><small>With all its changes</small><kbd id="k-reopen">⌘Z</kbd></button>
-            <button id="scan-pic" class="card" title="Scan a picture with a scanner"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="12.5" width="18" height="6.5" rx="1.8"/><path d="M5 12.5V9.4a1.5 1.5 0 0 1 1.1-1.4l11-3A1.5 1.5 0 0 1 19 6.4v6.1"/><path d="M16.5 15.8h1.5"/></svg><b>Scan</b><small>From a scanner</small></button>
+            <button id="reopen-pic" class="card" hidden title="Bring back the image you closed last, with all its changes and its undo history"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 8.5a7.5 7.5 0 1 1-1 5"/><path d="M4.5 3.8v5h5"/><path d="M12 8.5V12l2.5 1.5"/></svg><b>Reopen last closed</b><small>With all its changes</small><kbd id="k-reopen">⌘Z</kbd></button>
+            <button id="scan-pic" class="card" title="Scan an image with a scanner"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="12.5" width="18" height="6.5" rx="1.8"/><path d="M5 12.5V9.4a1.5 1.5 0 0 1 1.1-1.4l11-3A1.5 1.5 0 0 1 19 6.4v6.1"/><path d="M16.5 15.8h1.5"/></svg><b>Scan</b><small>From a scanner</small></button>
         </div>
-        <div id="recent" hidden><div class="rhead"><h2>Recent</h2><button id="recent-clear" title="Remove the pictures from this list (the files stay)">Clear</button></div><div id="recent-list"></div></div>
+        <div id="recent" hidden><div class="rhead"><h2>Recent</h2><button id="recent-clear" title="Remove the images from this list (the files stay)">Clear</button></div><div id="recent-list"></div></div>
     </div>
     <div id="tools" aria-label="Edit tools">
         <button class="tool on" id="tool-select" title="Select" aria-label="Select"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="5.5" width="15" height="13" rx="1" stroke-dasharray="3 2.5"/></svg></button>
@@ -60,7 +60,7 @@
     <section id="chat-setup"><p id="chat-msg"></p><div id="chat-actions"></div><p id="chat-url" class="muted"></p></section>
     <section id="chat-main" hidden>
         <div id="chat-log"></div>
-        <div id="chat-form"><textarea id="chat-text" rows="1" placeholder="Ask Claude about this picture…" spellcheck="false"></textarea><button id="chat-send" class="primary">Send</button><button id="chat-stop" hidden>Stop</button></div>
+        <div id="chat-form"><textarea id="chat-text" rows="1" placeholder="Ask Claude about this image…" spellcheck="false"></textarea><button id="chat-send" class="primary">Send</button><button id="chat-stop" hidden>Stop</button></div>
     </section>
 </aside>
 <div id="newdlg" hidden role="dialog" aria-modal="true" aria-labelledby="newdlg-title">
@@ -78,7 +78,7 @@
         <h2 id="rotdlg-title">Rotate by angle</h2>
         <div class="row"><label for="rd-a">Angle</label><input type="number" id="rd-a" min="-360" max="360" step="0.1" value="0"><span class="unit">° clockwise</span></div>
         <div class="row"><input type="range" id="rd-r" min="-45" max="45" step="0.1" value="0" aria-label="Angle"></div>
-        <div class="row"><label for="rd-c">Corners</label><select id="rd-c"><option value="grow">Make the picture bigger</option><option value="crop">Keep the size, cut the corners</option></select></div>
+        <div class="row"><label for="rd-c">Corners</label><select id="rd-c"><option value="grow">Make the image bigger</option><option value="crop">Keep the size, cut the corners</option></select></div>
         <div class="row"><label for="rd-bg">Empty parts</label><select id="rd-bg"><option value="auto">Automatic</option><option value="transparent">Transparent</option><option value="white">White</option><option value="second">Second color</option></select></div>
         <p class="err" id="rd-err" hidden></p>
         <div class="btns"><button type="button" id="rd-cancel">Cancel</button><button type="submit" id="rd-ok" class="primary">Rotate</button></div>

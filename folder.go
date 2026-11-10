@@ -47,7 +47,7 @@ func (a *App) Step(delta int) (string, error) {
 	if cur.Path == "" { // a pasted or a new picture is in no folder: there is nothing to go to, and nothing is said
 		return "", nil
 	}
-	if !a.discardOK("go to " + map[bool]string{true: "the next", false: "the previous"}[delta > 0] + " picture") {
+	if !a.discardOK("go to " + map[bool]string{true: "the next", false: "the previous"}[delta > 0] + " image") {
 		return "", nil
 	}
 	cur = a.current() // saving may have made the picture a file in another folder
@@ -56,7 +56,7 @@ func (a *App) Step(delta int) (string, error) {
 		return "", err
 	}
 	if len(names) == 0 {
-		return "No pictures in this folder", nil
+		return "No images in this folder", nil
 	}
 	i := indexOf(names, cur.Name)
 	if i < 0 { // the picture is gone from the folder: start from the first
