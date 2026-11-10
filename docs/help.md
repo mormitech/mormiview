@@ -74,7 +74,7 @@ A picture with transparent parts has chequered squares behind it.
 
 | Tool | What it does |
 |---|---|
-| **Select** | Drag to select a rectangle. Drag an edge or the inside of the selection to resize or move just the frame (the picture is not touched, in view mode and in edit mode alike). Hold **Shift** and drag an edge to stretch the selected part, or its inside to move it; the place it came from turns white (transparent where the picture can have it). A part that floats (a pasted picture, or one you lifted this way) moves and stretches with a plain drag until it is applied (a click beside it, or Esc) |
+| **Select** | Drag to select a rectangle. Drag an edge or the inside of the selection to resize or move just the frame (the picture is not touched, in view mode and in edit mode alike). Hold **Cmd** (Mac) or **Ctrl** (Windows, Linux) and drag an edge to stretch the selected part, or its inside to move it; add **Shift** on a corner to keep the proportions (Shift alone on a corner does the same for the frame); the place it came from turns white (transparent where the picture can have it). A part that floats (a pasted picture, or one you lifted this way) moves and stretches with a plain drag until it is applied (a click beside it, or Esc) |
 | **Polygon select** | Select any shape, free-hand: see [below](#selecting) |
 | **Pencil** | Drag to draw. Left button: first color. Right button: second color. The ribbon above the bottom bar sets the width |
 | **Line**, **Rectangle**, **Circle and ellipse** | Drag them out. **Shift** makes a line at a multiple of 45°, a square, a true circle. The ribbon sets the width, solid / dashed / dotted, and outline, outline with fill, or fill |
