@@ -320,3 +320,16 @@ body.edit.gif-playing #tools { opacity:0; pointer-events:none; } body.edit.gif-p
 #gifbar #gif-add, #gifbar #gif-del { width:28px; height:28px; } #gifbar #gif-del:hover { color:var(--bad); }
 #gifbar #gif-speed { display:flex; align-items:center; gap:3px; margin-left:4px; font:600 11px ui-monospace, "SF Mono", Menlo, Consolas, monospace; color:var(--muted); }
 #gifbar #gif-ms { width:58px; padding:2px 4px; font:inherit; color:var(--text); background:var(--btn); border:1px solid var(--line); border-radius:6px; }
+
+/* the canvas grips of edit mode (main.js, renderGrips): a small square in the middle of each edge and on each corner of the picture */
+#grips { position:absolute; pointer-events:none; z-index:6; } #grips[hidden] { display:none; }
+#grips .grip { position:absolute; width:9px; height:9px; margin:-5px 0 0 -5px; box-sizing:border-box; background:#fff; border:1.5px solid var(--accent); border-radius:2px; pointer-events:auto; box-shadow:0 0 0 1px rgba(0,0,0,.15); }
+#grips .grip:hover, #grips.dragging .grip { background:var(--accent); }
+#grips .g-t { left:50%; top:0; cursor:ns-resize; } #grips .g-b { left:50%; top:100%; cursor:ns-resize; }
+#grips .g-l { left:0; top:50%; cursor:ew-resize; } #grips .g-r { left:100%; top:50%; cursor:ew-resize; }
+#grips .g-tl { left:0; top:0; cursor:nwse-resize; } #grips .g-br { left:100%; top:100%; cursor:nwse-resize; }
+#grips .g-tr { left:100%; top:0; cursor:nesw-resize; } #grips .g-bl { left:0; top:100%; cursor:nesw-resize; }
+#grips.dragging .grip { opacity:0; }
+#grips .ghost { position:absolute; box-sizing:border-box; border:1.5px dashed var(--accent); background:rgba(31,122,234,.06); pointer-events:none; }
+#grips .ghost[hidden] { display:none; }
+#grips .ghost b { position:absolute; right:4px; bottom:4px; padding:2px 6px; border-radius:4px; background:var(--accent); color:var(--accent-text); font:600 11px system-ui, sans-serif; white-space:nowrap; }

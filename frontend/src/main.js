@@ -240,6 +240,7 @@ function draw() {
   renderText();
   renderSelection();
   renderPoly();
+  renderGrips();
   $('discard-img').disabled = !(view.modified || floatChanges(view.fl));
   if (view.pixelated && lastPointer) readPixel(lastPointer.x, lastPointer.y); // the picture moved under the pointer
 }
@@ -2024,6 +2025,88 @@ function undoRedo(delta) {
   travel(history.at + delta);
 }
 const undo = () => undoRedo(-1), redo = () => undoRedo(1);
+
+// ---- Canvas grips -------------------------------------------------------------------------------------------
+// In edit mode, with nothing selected, the picture has a grip in the middle of each edge and on each corner, as in Paint: dragging one
+// out adds room to the canvas on that side (in the background color, or transparent when the picture has transparent parts); dragging
+// it in cuts the picture there. The picture itself is not scaled (ResizeCanvas, the same as the chat's resize_canvas). One step of the history.
+const GRIPS = {t: 'bottom', b: 'top', l: 'right', r: 'left', tl: 'bottom-right', tr: 'bottom-left', bl: 'top-right', br: 'top-left'}; // grip → the side the picture keeps
+let grips = null, gripDrag = null;
+
+function gripsWanted() {
+  return editOn() && pic.naturalWidth && !pic.hidden && !view.sel && !view.selDrag && !view.fl && !gif.meta && !view.angle && !ink && !shape && !txt
+    && !document.body.classList.contains('full');
+}
+
+// The box of the picture on the stage (CSS pixels), as draw() put it there.
+function picBox() {
+  return {x: Math.round(view.x + view.ox), y: Math.round(view.y + view.oy), w: Math.max(1, Math.round(dispW() * view.sx)), h: Math.max(1, Math.round(dispH() * view.sy))};
+}
+
+function makeGrips() {
+  grips = document.createElement('div');
+  grips.id = 'grips';
+  grips.innerHTML = Object.keys(GRIPS).map((g) => `<i class="grip g-${g}" data-g="${g}" title="Drag to add room to the canvas, or to cut it"></i>`).join('')
+    + '<div class="ghost"><b></b></div>';
+  $('stage').append(grips);
+  for (const el of grips.querySelectorAll('.grip')) el.addEventListener('pointerdown', gripDown);
+}
+
+function renderGrips() {
+  if (!gripDrag && !gripsWanted()) { if (grips) grips.hidden = true; return; }
+  if (!grips) makeGrips();
+  grips.hidden = false;
+  const b = picBox();
+  Object.assign(grips.style, {left: `${b.x}px`, top: `${b.y}px`, width: `${b.w}px`, height: `${b.h}px`});
+  const ghost = grips.querySelector('.ghost');
+  ghost.hidden = !gripDrag;
+  if (!gripDrag) return;
+  const {W, H, ox, oy} = gripDrag.size; // the new canvas, and where the old picture sits in it (picture pixels)
+  Object.assign(ghost.style, {left: `${-ox * view.sx}px`, top: `${-oy * view.sy}px`, width: `${W * view.sx}px`, height: `${H * view.sy}px`});
+  ghost.firstElementChild.textContent = `${W} × ${H}`;
+}
+
+// The canvas a grip dragged by (dx, dy) picture pixels makes: its size, and the place of the old picture in it.
+function gripSize(g, dx, dy) {
+  const w = dispW(), h = dispH();
+  let W = w, H = h, ox = 0, oy = 0;
+  if (g.includes('l')) { W = w - dx; ox = -dx; }
+  if (g.includes('r')) W = w + dx;
+  if (g.includes('t')) { H = h - dy; oy = -dy; }
+  if (g.includes('b')) H = h + dy;
+  if (W < 1) { if (g.includes('l')) ox -= 1 - W; W = 1; } // (at least one pixel is left)
+  if (H < 1) { if (g.includes('t')) oy -= 1 - H; H = 1; }
+  return {W, H, ox, oy};
+}
+
+function gripDown(ev) {
+  if (ev.button !== 0) return;
+  ev.preventDefault(); ev.stopPropagation();
+  const el = ev.currentTarget, g = el.dataset.g;
+  el.setPointerCapture(ev.pointerId);
+  gripDrag = {g, from: [ev.clientX, ev.clientY], size: gripSize(g, 0, 0)};
+  grips.classList.add('dragging');
+  const move = (e) => {
+    const dx = Math.round((e.clientX - gripDrag.from[0]) / view.sx), dy = Math.round((e.clientY - gripDrag.from[1]) / view.sy);
+    gripDrag.size = gripSize(g, g === 't' || g === 'b' ? 0 : dx, g === 'l' || g === 'r' ? 0 : dy);
+    renderGrips();
+  };
+  const up = async () => {
+    el.removeEventListener('pointermove', move); el.removeEventListener('pointerup', up); el.removeEventListener('pointercancel', up);
+    const {W, H} = gripDrag.size;
+    gripDrag = null; grips.classList.remove('dragging');
+    renderGrips();
+    if (W === dispW() && H === dispH()) return;
+    try {
+      let bg = paint.bg.length === 7 ? paint.bg + 'FF' : paint.bg;
+      try { if (await HasTransparency()) bg = '#00000000'; } catch {}
+      const info = await ResizeCanvas(view.rot, W, H, GRIPS[g], bg);
+      await showImage(info, {rot: 0});
+      commit('canvas resized');
+    } catch (e) { problem(errText(e)); }
+  };
+  el.addEventListener('pointermove', move); el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
+}
 
 // Drag to select (with Shift on an edge of the frame, the frame is moved without touching the picture).
 function beginSelection(clientX, clientY) {
