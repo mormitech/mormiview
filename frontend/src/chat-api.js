@@ -225,7 +225,7 @@ export async function askProvider() {
       <div class="mv-row"><label for="mv-orkey">API key</label><input id="mv-orkey" type="password" spellcheck="false" autocomplete="off" placeholder="sk-or-…" value="${esc(keyOf('openrouter'))}"${was === 'openrouter' ? ' autofocus' : ''}></div>
       <div class="mv-row"><label for="mv-ormodel">Model</label><input id="mv-ormodel" list="mv-ormodels" spellcheck="false" autocomplete="off" value="${esc(orModel())}"></div>
       <datalist id="mv-ormodels"></datalist>
-      <p class="mv-note" id="mv-ornote">Any OpenRouter model that can use tools and see pictures; ${OR_DEFAULT} is the best for retouching.</p>
+      <p class="mv-note" id="mv-ornote">Any OpenRouter model that can use tools and see images; ${OR_DEFAULT} is the best for retouching.</p>
     </div>
     <label class="mv-check mv-keys"><input type="checkbox" id="mv-keep"${keep ? ' checked' : ''}> Remember the keys ${cfg.desktop ? 'on this computer' : 'in this browser'}</label>
     ${hasAny ? '<p class="mv-note mv-keys"><a href="#" id="mv-forget">Forget the keys</a></p>' : ''}`, (box) => {
