@@ -93,7 +93,7 @@ func (a *App) Recent() []RecentFile {
 
 // OpenRecent opens a picture of the list (the question about unsaved changes comes first).
 func (a *App) OpenRecent(path string) error {
-	if !a.discardOK("open another picture") {
+	if !a.discardOK("open another image") {
 		return nil
 	}
 	return a.setImage(path)
@@ -142,10 +142,10 @@ func (a *App) fillRecentMenu() bool {
 		})
 	}
 	if len(list) == 0 {
-		sub.AddText("No recent pictures", nil, nil).Disabled = true
+		sub.AddText("No recent images", nil, nil).Disabled = true
 	} else {
 		sub.AddSeparator()
-		sub.AddText("Clear Recent Pictures", nil, func(*menu.CallbackData) { a.ClearRecent() })
+		sub.AddText("Clear recents list", nil, func(*menu.CallbackData) { a.ClearRecent() })
 	}
 	return true
 }

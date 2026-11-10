@@ -110,7 +110,7 @@ func (a *App) saveAsDialog(rot int, ask bool) (string, error) {
 		name = changedName(name, time.Now())
 	}
 	target, err := a.pickSave(wruntime.SaveDialogOptions{
-		Title:                "Save picture as",
+		Title:                "Save image as",
 		DefaultDirectory:     cur.Dir,
 		DefaultFilename:      name,
 		CanCreateDirectories: true,
@@ -153,7 +153,7 @@ func (a *App) saveTo(target string, rot int) (string, error) {
 	}
 	rot = (rot%4 + 4) % 4
 	if cur.Path != "" && samePath(cur.Path, target) && !cur.Modified && rot == 0 {
-		return cur.Name + " is this picture already", nil
+		return cur.Name + " is this image already", nil
 	}
 	transparent := a.HasTransparency() // asked now: the file that is saved is what is shown at this moment
 	tmp, err := os.CreateTemp(filepath.Dir(target), ".mormiview-save-*")

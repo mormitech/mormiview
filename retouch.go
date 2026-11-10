@@ -67,7 +67,7 @@ func newShape(sp retouchSpec, bounds image.Rectangle) (*shape, error) {
 		}
 		r := image.Rect(minX, minY, maxX+1, maxY+1)
 		if !r.In(bounds) {
-			return nil, fmt.Errorf("the shape (box %d,%d to %d,%d) is not inside the picture (%d × %d)", r.Min.X, r.Min.Y, r.Max.X-1, r.Max.Y-1, bounds.Dx(), bounds.Dy())
+			return nil, fmt.Errorf("the shape (box %d,%d to %d,%d) is not inside the image (%d × %d)", r.Min.X, r.Min.Y, r.Max.X-1, r.Max.Y-1, bounds.Dx(), bounds.Dy())
 		}
 		s := &shape{r: r, m: make([]uint8, r.Dx()*r.Dy())}
 		n := len(sp.Pts)
@@ -93,7 +93,7 @@ func newShape(sp retouchSpec, bounds image.Rectangle) (*shape, error) {
 	}
 	r := image.Rect(sp.X, sp.Y, sp.X+sp.W, sp.Y+sp.H)
 	if sp.W < 1 || sp.H < 1 || !r.In(bounds) {
-		return nil, fmt.Errorf("the part %d,%d %d × %d is not inside the picture (%d × %d); give x, y, w, h or a polygon of three points or more", sp.X, sp.Y, sp.W, sp.H, bounds.Dx(), bounds.Dy())
+		return nil, fmt.Errorf("the part %d,%d %d × %d is not inside the image (%d × %d); give x, y, w, h or a polygon of three points or more", sp.X, sp.Y, sp.W, sp.H, bounds.Dx(), bounds.Dy())
 	}
 	s := &shape{r: r, m: make([]uint8, r.Dx()*r.Dy())}
 	for i := range s.m {
@@ -196,7 +196,7 @@ func (a *App) Retouch(rot int, spec string) (ImageInfo, error) {
 		return ImageInfo{}, err
 	}
 	if base == nil {
-		return ImageInfo{}, fmt.Errorf("there is no picture in this window")
+		return ImageInfo{}, fmt.Errorf("there is no image in this window")
 	}
 	sh, err := a.shapeOf(sp, base.Bounds())
 	if err != nil {
@@ -371,7 +371,7 @@ func (a *App) cloneRegion(base *image.NRGBA, sp retouchSpec, sh *shape) (string,
 	}
 	to := image.Rect(ox, oy, ox+dw, oy+dh).Intersect(b)
 	if to.Empty() {
-		return "", fmt.Errorf("the copy would land outside the picture")
+		return "", fmt.Errorf("the copy would land outside the image")
 	}
 	if seamless {
 		poissonClone(base, src, alpha, dw, dh, ox, oy, opacity)
@@ -710,7 +710,7 @@ func fillRegion(base *image.NRGBA, sp retouchSpec, sh *shape, srcOnly, avoid *ma
 	}
 	ww, wh := win.Dx(), win.Dy()
 	if ww < patch || wh < patch {
-		return fmt.Errorf("the picture is too small for patches of %d pixels", patch)
+		return fmt.Errorf("the image is too small for patches of %d pixels", patch)
 	}
 	pix := make([]uint8, ww*wh*4)
 	known := make([]bool, ww*wh)
@@ -1096,7 +1096,7 @@ func (a *App) PolygonPNG(rot int, pts string) (string, error) {
 		return "", err
 	}
 	if base == nil {
-		return "", fmt.Errorf("there is no picture in this window")
+		return "", fmt.Errorf("there is no image in this window")
 	}
 	sh, err := newShape(retouchSpec{Pts: list}, base.Bounds())
 	if err != nil {

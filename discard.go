@@ -116,7 +116,7 @@ func (a *App) askLarge(w, h, pw, ph int) largeChoice {
 	if a.ctx == nil {
 		return pasteOver
 	}
-	msg := fmt.Sprintf("The clipboard picture is large (%d × %d, this picture is %d × %d): you probably want a whole new image.", w, h, pw, ph)
+	msg := fmt.Sprintf("The clipboard image is large (%d × %d, this image is %d × %d): you probably want a whole new image.", w, h, pw, ph)
 	switch runtime.GOOS {
 	case "windows":
 		switch windowsDiscardChoice("Large image content is about to be pasted", msg+"\n\nYes: paste as a new image\nNo: paste into the current image") { // (Yes comes back as choiceSave, No as choiceDiscard)

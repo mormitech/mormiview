@@ -74,7 +74,7 @@ const FORMATS = [['png', 'PNG'], ['jpg', 'JPEG'], ['gif', 'GIF'], ['bmp', 'BMP']
 export function saveDialog(o) {
   const pattern = o.Filters?.[0]?.Pattern || '';
   const allowed = FORMATS.filter(([e]) => !pattern || pattern.includes(`*.${e}`) || (e === 'tiff' && pattern.includes('*.tif')));
-  const name = o.DefaultFilename || 'picture.png';
+  const name = o.DefaultFilename || 'image.png';
   return modal((box, done) => {
     box.innerHTML = `<h2>${esc(o.Title || 'Save as')}</h2>
       <div class="mv-row"><label for="mv-name">Name</label><input id="mv-name" type="text" spellcheck="false" value="${esc(name)}" autofocus></div>

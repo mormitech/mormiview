@@ -3,6 +3,13 @@
 All notable changes to mcView are listed here, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and the versions are the [releases](https://github.com/mormitech/mcview/releases).
 
+## 0.57.10 – 2026-11-10
+
+### Changed
+
+- The app says "image" instead of "picture" everywhere: menus, dialogs, messages and hints (and the AI chat's instructions).
+- File → Open Recent: the last item is "Clear recents list" (it only empties the list; the files stay).
+
 ## 0.57.9 – 2026-11-10
 
 ### Changed

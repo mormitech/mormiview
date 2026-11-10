@@ -33,7 +33,7 @@ func (a *App) SaveSelectionAs(rot, x, y, w, h int) (string, error) {
 		return "", err
 	}
 	if w < 1 || h < 1 || !image.Rect(x, y, x+w, y+h).In(base.Bounds()) {
-		return "", fmt.Errorf("the selection %d,%d %d × %d is not inside the picture", x, y, w, h)
+		return "", fmt.Errorf("the selection %d,%d %d × %d is not inside the image", x, y, w, h)
 	}
 	stem := "clipboard"
 	if cur.Path != "" {

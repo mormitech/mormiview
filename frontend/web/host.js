@@ -88,7 +88,7 @@ function callGo(name, args) {
 const overrides = {
   async PrintPNG(b64) { await printImage(`data:image/png;base64,${b64}`); return ''; },
   async ScanImage() { throw 'Scanning needs the desktop app: a web page cannot reach a scanner'; },
-  async CopyImageNative() { throw 'The browser did not let the page copy the picture'; },
+  async CopyImageNative() { throw 'The browser did not let the page copy the image'; },
   async ClipboardHasImage() {
     if (pasted && Date.now() - pasted.at < 60000) return true;
     try {
@@ -141,7 +141,7 @@ function pick({multiple = true, folder = false} = {}) {
     input.addEventListener('cancel', () => finish([]));
     const open = () => input.click();
     if (navigator.userActivation?.isActive === false) { // too long after the click or the key: the browser shows no file chooser now
-      pickerDialog(folder ? 'Open a folder of pictures' : 'Open a picture', folder ? 'Choose folder…' : 'Choose file…').then((ok) => ok ? open() : finish([]));
+      pickerDialog(folder ? 'Open a folder of images' : 'Open an image', folder ? 'Choose folder…' : 'Choose file…').then((ok) => ok ? open() : finish([]));
     } else open();
   });
 }
@@ -150,7 +150,7 @@ async function openFiles(folder) {
   const files = await pick({folder});
   if (!files.length) return '';
   const paths = await importFiles(files);
-  if (!paths.length) { dispatch('problem', ['None of those files is a picture type mormiView opens']); return ''; }
+  if (!paths.length) { dispatch('problem', ['None of those files is an image type mormiView opens']); return ''; }
   return paths[0];
 }
 
@@ -191,7 +191,7 @@ function initDrop() {
     if (!ev.dataTransfer?.types.includes('Files')) return;
     ev.preventDefault();
     const paths = await importFiles(await filesFromDrop(ev.dataTransfer));
-    if (!paths.length) { dispatch('problem', ['None of those files is a picture type mormiView opens']); return; }
+    if (!paths.length) { dispatch('problem', ['None of those files is an image type mormiView opens']); return; }
     window.go.main.App.OpenRecent(paths[0]).catch((e) => dispatch('problem', [String(e)]));
   });
 }

@@ -106,7 +106,7 @@ export async function aiDialog(m) {
 }
 
 function newConversation() {
-  ChatReset(); $('chat-log').replaceChildren(); bubble = null; setBusy(false); add('hint', 'New conversation. Ask Claude to change this picture.');
+  ChatReset(); $('chat-log').replaceChildren(); bubble = null; setBusy(false); add('hint', 'New conversation. Ask Claude to change this image.');
 }
 
 async function login() {
@@ -131,7 +131,7 @@ function render(problem = '') {
     const warn = !info.api && !!info.method && info.method !== 'claude.ai';
     $('chat-who').title = warn ? 'Not a Claude subscription: this is billed by usage' : info.api ? 'Billed by usage to your API key' : '';
     $('chat-who').classList.toggle('warn', warn);
-    if (!$('chat-log').children.length) add('hint', 'Ask Claude to change this picture, for example “draw a red circle in the middle”.');
+    if (!$('chat-log').children.length) add('hint', 'Ask Claude to change this image, for example “draw a red circle in the middle”.');
     setBusy(!!info.busy);
     $('chat-text').focus();
   }

@@ -53,7 +53,7 @@ func (a *App) Transform(rot int, spec string) (ImageInfo, error) {
 		return ImageInfo{}, err
 	}
 	if base == nil {
-		return ImageInfo{}, fmt.Errorf("there is no picture in this window")
+		return ImageInfo{}, fmt.Errorf("there is no image in this window")
 	}
 	file := a.current().Path
 	var out, orig *image.NRGBA
@@ -103,7 +103,7 @@ func resizePicture(src *image.NRGBA, sp transformSpec) (*image.NRGBA, error) {
 		w = int(math.Round(float64(sw) * float64(h) / float64(sh)))
 	}
 	if w < 1 || h < 1 || w*h > maxPixels {
-		return nil, fmt.Errorf("a picture of %d × %d is too small or too big (up to %d pixels); give w and/or h, or scale", w, h, maxPixels)
+		return nil, fmt.Errorf("an image of %d × %d is too small or too big (up to %d pixels); give w and/or h, or scale", w, h, maxPixels)
 	}
 	dst := image.NewNRGBA(image.Rect(0, 0, w, h))
 	scalerOf(sp.Filter).Scale(dst, dst.Bounds(), src, src.Bounds(), xdraw.Src, nil)
@@ -161,7 +161,7 @@ func rotatePicture(src *image.NRGBA, sp transformSpec, alpha bool) (*image.NRGBA
 		dw, dh = math.Ceil(math.Abs(sw*cs)+math.Abs(sh*sn)), math.Ceil(math.Abs(sw*sn)+math.Abs(sh*cs))
 	}
 	if int(dw)*int(dh) > maxPixels {
-		return nil, fmt.Errorf("the turned picture would be too big")
+		return nil, fmt.Errorf("the turned image would be too big")
 	}
 	dst := image.NewNRGBA(image.Rect(0, 0, int(dw), int(dh)))
 	draw.Draw(dst, dst.Bounds(), image.NewUniform(c), image.Point{}, draw.Src)
@@ -174,7 +174,7 @@ func rotatePicture(src *image.NRGBA, sp transformSpec, alpha bool) (*image.NRGBA
 // placePicture lays the picture of a file over base with its top left corner at x, y (what hangs over the edge is cut off).
 func placePicture(base *image.NRGBA, sp transformSpec) (*image.NRGBA, error) {
 	if !isImage(sp.Path) {
-		return nil, fmt.Errorf("%q is not a picture file", sp.Path)
+		return nil, fmt.Errorf("%q is not an image file", sp.Path)
 	}
 	f, err := os.Open(sp.Path)
 	if err != nil {
@@ -183,7 +183,7 @@ func placePicture(base *image.NRGBA, sp transformSpec) (*image.NRGBA, error) {
 	defer f.Close()
 	img, _, err := image.Decode(f)
 	if err != nil {
-		return nil, fmt.Errorf("the picture cannot be read: %v", err)
+		return nil, fmt.Errorf("the image cannot be read: %v", err)
 	}
 	b := img.Bounds()
 	w, h := b.Dx(), b.Dy()
@@ -203,7 +203,7 @@ func placePicture(base *image.NRGBA, sp transformSpec) (*image.NRGBA, error) {
 		}
 	}
 	if w*h > maxPixels {
-		return nil, fmt.Errorf("the picture is too big to place")
+		return nil, fmt.Errorf("the image is too big to place")
 	}
 	layer := image.NewNRGBA(image.Rect(0, 0, w, h))
 	scalerOf(sp.Filter).Scale(layer, layer.Bounds(), img, b, xdraw.Src, nil)
@@ -217,7 +217,7 @@ func placePicture(base *image.NRGBA, sp transformSpec) (*image.NRGBA, error) {
 	copy(out.Pix, base.Pix)
 	r := image.Rect(sp.X, sp.Y, sp.X+w, sp.Y+h)
 	if r.Intersect(out.Bounds()).Empty() {
-		return nil, fmt.Errorf("the picture at %d,%d (%d × %d) is outside this picture (%d × %d)", sp.X, sp.Y, w, h, out.Bounds().Dx(), out.Bounds().Dy())
+		return nil, fmt.Errorf("the image at %d,%d (%d × %d) is outside this image (%d × %d)", sp.X, sp.Y, w, h, out.Bounds().Dx(), out.Bounds().Dy())
 	}
 	draw.Draw(out, r, layer, image.Point{}, draw.Over)
 	return out, nil

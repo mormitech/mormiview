@@ -234,7 +234,7 @@ export async function askProvider() {
     if (p === 'anthropic' && !k) return 'Paste your Claude API key.';
     if (p === 'openrouter' && !ork) return 'Paste your OpenRouter API key.';
     const om = box.querySelector('#mv-ormodel').value.trim() || OR_DEFAULT;
-    if (p === 'openrouter' && box.mvModels && !box.mvModels.some((m) => m.id === om)) return `OpenRouter has no model “${om}” that can use tools and see pictures.`;
+    if (p === 'openrouter' && box.mvModels && !box.mvModels.some((m) => m.id === om)) return `OpenRouter has no model “${om}” that can use tools and see images.`;
     return {provider: p, key: k, orKey: ork, model: box.querySelector('#mv-model').value, orModel: om, keep: box.querySelector('#mv-keep').checked};
   }, (box) => { // (shows the part of the chosen provider, and fills the list of OpenRouter's models)
     const sel = box.querySelector('#mv-prov');
@@ -271,7 +271,7 @@ export const apiBindings = {
     const name = or ? orModel() : MODELS.find(([id]) => id === model())?.[1].replace(/ \(.*/, '') || model();
     return {
       claude: true, loggedIn: has, email: has ? (or ? 'OpenRouter' : 'Claude API') : '', plan: name, method: '', api: true, busy: !!busy, signingIn: false,
-      signInText: `To chat with Claude about this picture, give mormiView an API key: your Claude API key, or an OpenRouter key. The chat then talks to that provider; the key stays ${cfg.desktop ? 'on this computer' : 'in this browser'}.`,
+      signInText: `To chat with Claude about this image, give mormiView an API key: your Claude API key, or an OpenRouter key. The chat then talks to that provider; the key stays ${cfg.desktop ? 'on this computer' : 'in this browser'}.`,
       signInLabel: 'Set API key…',
     };
   },

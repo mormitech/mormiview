@@ -25,10 +25,10 @@ func highlight(base *image.NRGBA, sh *shape, sp effectSpec) (string, error) {
 		}
 	}
 	if n == 0 {
-		return "", fmt.Errorf("the part is outside the picture")
+		return "", fmt.Errorf("the part is outside the image")
 	}
 	if n == w*h {
-		return "", fmt.Errorf("select the part to highlight first: highlight pushes back the rest of the picture")
+		return "", fmt.Errorf("select the part to highlight first: highlight pushes back the rest of the image")
 	}
 	border, err := parseColorA(sp.Color, "#FFFFFFE6")
 	if err != nil {

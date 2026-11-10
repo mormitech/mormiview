@@ -85,7 +85,7 @@ func (a *App) Effect(rot int, spec string) (ImageInfo, error) {
 		return ImageInfo{}, err
 	}
 	if base == nil {
-		return ImageInfo{}, fmt.Errorf("there is no picture in this window")
+		return ImageInfo{}, fmt.Errorf("there is no image in this window")
 	}
 	sh, err := a.effectShape(sp, base.Bounds())
 	if err != nil {
@@ -133,7 +133,7 @@ func applyEffect(base *image.NRGBA, sh *shape, sp effectSpec) (string, error) {
 	r := sh.r.Inset(-pad).Intersect(bounds)
 	w, h := r.Dx(), r.Dy()
 	if w < 1 || h < 1 {
-		return "", fmt.Errorf("the part is outside the picture")
+		return "", fmt.Errorf("the part is outside the image")
 	}
 	tile := image.NewNRGBA(image.Rect(0, 0, w, h))
 	for y := 0; y < h; y++ {

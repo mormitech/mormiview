@@ -48,7 +48,7 @@ func (a *App) ResizeCanvas(rot, w, h int, anchor, bg string) (ImageInfo, error) 
 		return ImageInfo{}, err
 	}
 	if base == nil {
-		return ImageInfo{}, fmt.Errorf("there is no picture in this window")
+		return ImageInfo{}, fmt.Errorf("there is no image in this window")
 	}
 	file := a.current().Path
 	if bg == "" {
@@ -83,12 +83,12 @@ func (a *App) CropPicture(rot, x, y, w, h int) (ImageInfo, error) {
 		return ImageInfo{}, err
 	}
 	if base == nil {
-		return ImageInfo{}, fmt.Errorf("there is no picture in this window")
+		return ImageInfo{}, fmt.Errorf("there is no image in this window")
 	}
 	b := base.Bounds()
 	r := image.Rect(x, y, x+w, y+h)
 	if w < 1 || h < 1 || !r.In(b) {
-		return ImageInfo{}, fmt.Errorf("the part %d,%d %d × %d is not inside the picture (%d × %d)", x, y, w, h, b.Dx(), b.Dy())
+		return ImageInfo{}, fmt.Errorf("the part %d,%d %d × %d is not inside the image (%d × %d)", x, y, w, h, b.Dx(), b.Dy())
 	}
 	n := image.NewNRGBA(image.Rect(0, 0, w, h))
 	draw.Draw(n, n.Bounds(), base, r.Min, draw.Src)

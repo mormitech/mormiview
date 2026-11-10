@@ -45,7 +45,7 @@ func (a *App) restoreState(n int, after func() error) (ImageInfo, error) {
 	st, ok := a.statesLocked()[n]
 	if !ok {
 		a.mu.Unlock()
-		return ImageInfo{}, fmt.Errorf("that picture is not remembered any more")
+		return ImageInfo{}, fmt.Errorf("that image is not remembered any more")
 	}
 	a.image, a.clip, a.clipPNG, a.workDir, a.blank, a.origin = st.image, st.clip, st.clipPNG, st.workDir, st.blank, st.origin
 	a.stateID = n
