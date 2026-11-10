@@ -68,7 +68,8 @@ The sample picture is a free (CC0) photo from Unsplash, via Wikimedia Commons. T
 
 - **Select** (default): drag an edge or the inside of the selection to move or resize just the frame; hold **Cmd** (Mac) or **Ctrl** and drag to stretch or move the selected part itself (**Shift** on a corner keeps the proportions); the place it came from turns white
   (transparent in a picture that can have it). **Ctrl+V** lays the clipboard picture over this one as a floating part you can drag and stretch
-  (Delete, Backspace or Esc take it away; a click beside it lays it down).
+  (Delete, Backspace or Esc take it away; a click beside it lays it down). With nothing selected, grips on the edges and corners of the image resize the canvas, as in Paint:
+  drag out to add room (background color, or transparent), drag in to cut.
 - **Polygon select**: draw round any shape free-hand; when you let go, the end joins the start and mormiView turns the line into a polygon (a few corners, within about a pixel of what you drew). Holding the **right mouse button** does the same with the Select tool. **Delete** fills it with the second color, **Ctrl+C** copies what is inside it, **Esc** lets it go (Esc or a right click drops a selection that is still being drawn, the rectangle too).
 - **Pencil**: drag to draw; left button the first color, right button the second. The ribbon above the bottom bar sets the width.
 - **Line** and **Rectangle**: drag them out; **Shift** makes a line at a multiple of 45° and a square. The ribbon sets the width, a solid, dashed or dotted style and, for the rectangle,
